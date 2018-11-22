@@ -1,0 +1,217 @@
+\documentclass[12pt,a4paper]{article}
+\usepackage[utf8]{inputenc}
+\usepackage[portuguese]{babel}
+\usepackage{graphicx, hyperref, verbatim, multicol, amsmath, listings}
+
+\author{Grupo XX \and Daniel Fernandes 86400 \& \\Francisco Sousa 86416 \& Henrique Ferreira 86432}
+\title{Projeto de Bases de Dados, Parte 2}
+\begin{document}
+\maketitle
+\newpage
+
+\section{Introdução}
+\section{Modelo Relacional}
+
+EntidadeMeio(\underline{nomeEntidade}) \\\\
+Coordenador(\underline{idCoordenador}) \\\\
+Local(\underline{moradaLocal}) \\\\
+Camara(\underline{numCamara}) \\\\
+Meio(\underline{nomeEntidade}, \underline{numMeio}, nomeMeio)
+
+nomeEntidade: FK(EntidadeMeio) \\\\
+MeioCombate(\underline{nomeEntidade}, \underline{numMeio}, \underline{NomeMeio})
+
+nomeEntidade: FK(Meio)
+
+NumMeio: FK(Meio)
+
+nomeMeio: FK(Meio) \\\\
+MeioApoio(\underline{nomeEntidade}, \underline{numMeio}, \underline{NomeMeio})
+
+nomeEntidade: FK(Meio)
+
+NumMeio: FK(Meio)
+
+nomeMeio: FK(Meio) \\\\
+MeioSocorro(\underline{nomeEntidade}, \underline{numMeio}, \underline{NomeMeio})
+
+nomeEntidade: FK(Meio)
+
+numMeio: FK(Meio)
+
+nomeMeio: FK(Meio) \\\\
+ProcessoSocorro(\underline{numProcessoSocorro}) \\\\
+EventoEmergência(\underline{numTelefone}, \underline{instanteChamada}, nomePessoa) \\\\
+segmentoVideo(\underline{numCamera}, \underline{dataHoraInicio}, \underline{numSegmento}, duração)
+
+numCamara: FK(video)
+
+dataHoraInicio: FK(video) \\\\
+Video(\underline{numCamara}, \underline{dataHoraInicio}, dataHoraFim)
+
+numCamara: FK(video) \\\\
+Transporta(\underline{numProcessoSocorro}, \underline{nomeEntidade}, \underline{numMeio}, numVitimas )
+
+numProcessoSocorro: FK(ProcessoSocorro)
+
+nomeEntidade: FK(Meio)
+
+numMeio: FK(Meio) \\\\
+Alocado(\underline{numProcessoSocorro}, \underline{numMeio}, numHoras)
+
+NumProcessoSocorro: FK(processoSocorro) \\\\
+localIncendio(\underline{numTelefone}, \underline{instanteChamada}, \underline{moradaLocal})
+
+instanteChamada: FK(EventoEmergência)
+
+numTelefone: FK(EventoEmergência)
+
+moradaLocal: FK(Local) \\\\
+Origina(\underline{numTelefone}, \underline{instanteChamada}, \underline{numProcessoSocorro})  ?
+
+numTelefone: FK(EventoEmergência)
+
+instanteChamada: FK(EventoEmergência)
+
+numProcessoSocorro: FK(ProcessoSocorro) \\\\
+acciona(\underline{numProcessoSocorro}, \underline{numMeio},  \underline{nomeEntidade})
+
+numProcessoSocorro: FK(ProcessoSocorro)
+
+numMeio: FK(Meio)
+
+nomeEntidade: FK(Meio) \\\\
+audita(\underline{numProcessoSocorro}, \underline{idCoordenador}, \underline{numMeio}, \underline{nomeEntidade}, datahoraInicio, texto, datahorafim, dataAuditoria)
+
+NumProcessoSocorro, numMeio, nomeEntidade: FK(acciona)
+
+idCoordenador: FK(Coordenador) \\\\
+Vigia(\underline{moradaLocal}, \underline{numCamara})
+
+moradaLocal: FK(Local)
+
+numCamara: FK(Camara) \\\\
+Solicita(\underline{idCoordenador}, \underline{dataHoraInicio}, \underline{numCamara}, datahorainicio, datahorafim)
+
+idCoordenador: FK(Coordenador)
+
+dataHoraInicio: FK(Vídeo) 
+
+numCamara: FK(Camara) \\\\
+
+\section{Restrições Referentes ao Modelo Relacional}
+
+
+\textbf{RI1} - Quando o EntidadeMeio for eliminada os correspondentes Meios também são.
+\textbf{RI2} - Qualquer Evento de Emergência origina no máximo um ProcessoSocorro
+\textbf{RI3} - Um EventoEmergência tem um e um só Local.
+\textbf{RI4} - Um ProcessoSocorro tem de ser originado por pelo menos Evento de Emergência
+\textbf{RI5} - Quando o Vídeo for eliminado os correspondentes segmentos de vídeos também são.
+\textbf{RI6} - Quando camara for eliminada os correspondentes vídeos também são.
+
+
+\section{Restrições comuns entre modelo E-A e Modelo Relacional}
+\textbf{RI7} - O coordenador só pode solicitar vídeos de períodos temporais que tenha auditado;
+\textbf{RI8} - A data-hora de fim da auditoria tem de ser posterior à data-hora de inicio;
+\textbf{RI9} - A data da auditoria tem de ser anterior ou igual ao momento atual;
+\textbf{RI10} - Um meio de socorro apenas pode transportar vítimas de processos de socorro onde
+tenha sido acionado;
+\textbf{RI11} - Um meio de apoio apenas pode ser alocado a processos de socorro onde tenha sido acionado
+\textbf{RI12} - Conjuntamente, os atributos “numTelefone” e “nomePessoa”, podem ser usados para
+identificar um evento de emergência;
+\textbf{RI13} - O somatório do número de segmentos de um vídeo multiplicados pelas suas res
+durações deve ser igual à diferença entre a data-hora de fim e de início do vídeo;
+\textbf{RI14} - Para um determinado ProcessoSocorro, um meio não pode simultaneamente
+fornecedor Meio de Apoio e Meio de Combate.
+\textbf{RI15} - Qualquer ProcessoSocorro origina EventoEmergencia \\
+
+\textbf{RI16} - meio pertence a uma e s\'o uma entidade \\
+
+
+\section{Álgebra Relacional}
+\paragraph{1}
+Liste todos os meios de Socorro (número do Meio e entidade proprietária) que foram
+usados em incêndios cujos eventos foram registados em “Palmela” ou “Moita”, entre
+10/8/2018 às 00:00 e 14/8/2018 às 23:59;
+
+$filtradoInstante \leftarrow \sigma_{10/8/2018\,00:00\, < \, instanteChamada\,  < \, 14/8/2018 \, 23:59} (localIncendio \bowtie origina)$
+
+$\Pi_{nomeEntidade}\left ( Transporta \bowtie \left (  \sigma_{moradaLocal=Pamela\, \vee \, moradaLocal=Moita } \left ( filtradoInstante \right )\right ) \right )$
+
+\paragraph{2}
+Liste os locais em que um mesmo número de telefone foi usado 2 ou mais vezes para
+reportar eventos de emergência;
+
+$\Pi_{nomeEntidade, nomeMeio} \left ( Transporta \bowtie \left ( \sigma_{count\geq 2}  \left (_{numTelefone}G_{count()}  \left (localIncendio \right ) \right ) \right ) \right )$
+
+\paragraph{3}
+Qual é o processo de socorro que envolveu maior número de meios distintos;
+
+$difnumMeio \leftarrow\left ( _{numProcessoSocorro}G_{count()}acciona \right )$
+
+$Max \leftarrow G_{max(count)} \left ( difnomeMeio \right )$
+
+$\Pi_{umProcessoSocorro}\left ( \sigma _{max=count}\left ( Max\times difnumMeio \right ) \right )$
+
+\paragraph{4}
+Qual a entidade fornecedora de meios que participou em mais processos de socorro no
+Verão de 2018;
+
+$filtradoInstante \leftarrow \sigma_{21/6/2018 00:00 < instanteChamada < 22/9/2018 23:59} \left ( acciona \bowtie origina \right ) $
+
+$NrEntidade \leftarrow\left ( _{nomeEntidade}G_{count()} filtradoInstante \right )$
+
+$Max \leftarrow G_{max(count)} \left ( NrEntidade \right )$
+
+$\Pi_{nomeEntidade}\left ( \sigma _{max=count}\left ( Max\times NrEntidade \right ) \right )$
+
+\paragraph{5}
+Quais são os processos de socorro, referente a eventos de emergência em 2018 de
+Oliveira do Hospital, onde existe pelo menos um acionamento de meios que não foi alvo
+de auditoria;
+
+$N \leftarrow localIncendio \bowtie \left( origina - origina \bowtie audita \right)$
+
+$\Pi_{numProcessoSocorro} \left( \sigma_{moradaLocal=Oliveira do Hospital \, \wedge \, 1/1/2018 00:00 < instanteChamada < 31/12/2018 23:59} \left(N\right)\right) $
+
+\paragraph{6}
+Quantos segmentos de vídeo com duração superior a 60 segundos, foram gravados em
+câmeras de vigilância de Monchique durante o mês de Agosto de 2018;
+
+$group \leftarrow vigia \bowtie video \bowtie segmentoVideo$
+
+$F \leftarrow \sigma_{duracao > 60 \wedge moradaLocal = Monchique \wedge dataHoraInicio > 1/8/2018 00:00 \wedge dataHoraFim < 31/8/2018 23:59} \left( group\right) $
+
+$\Pi_{count} \left(G_{count()} \left( F \right) \right) $
+
+\paragraph{7}
+Liste os Meios de combate que não foram usados como Meios de Apoio em nenhum
+processo de socorro;
+
+$\Pi \left( MeioCombate\right) - \Pi \left( MeioCombate \bowtie \left(MeioApoio \bowtie processoSocorro\right)\right) $
+
+\paragraph{8}
+Lista as entidades que forneceram meios de combate a todos os Processos de socorro
+que acionaram meios;
+
+$\Pi_{EntidadeMeio} \left(acciona\right) \div \Pi \left(MeioCombate\right)$
+
+\section{SQL}
+
+\paragraph{1}
+\begin{lstlisting}[
+    breaklines, 
+    language=SQL,
+ ]
+select nomeEntidade from Transporta natural join (select * from (select * from localIncendio natural join origina where 10/8/2018 00:00 < instanteChamada < 14/8/2018 23:59) where moradaLocal = Palmela or moradaLocal = Moita)
+\end{lstlisting}
+
+\paragraph{2}
+\begin{lstlisting}[
+    breaklines, 
+    language=SQL,
+ ]
+select nomeEntidade, nomeMeio from Transporta natural join (select * from (select count(numTelefone) from localIncendio) where count >=2)
+\end{lstlisting}
+
+\end{document} 
