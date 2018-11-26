@@ -8,7 +8,14 @@ drop table processo_socorro cascade;
 drop table entidade_meio cascade;
 drop table meio cascade;
 drop table meio_combate cascade;
-
+drop table meio_apoio cascade;
+drop table meio_socorro cascade;
+drop table transporta cascade;
+drop table alocado cascade;
+drop table acciona cascade;
+drop table coordenador cascade;
+drop table audita cascade;
+drop table solicita cascade;
 
 create table camara 
     (num_camara char(5) not null unique,
@@ -78,3 +85,75 @@ create table meio_combate
      constraint fk_num_meio foreign key num_meio references meio(num_meio),
      constraint fk_nome_entidade foreign key nome_entidade references meio(nome_entidade)
     );
+
+create table meio_apoio
+    (num_meio       char(10)    not null,
+     nome_entidade  varchar(10) not null,
+     constraint pk_apoio primary key(nome_entidade, num_meio),
+     constraint fk_apoio_num  foreign key(num_meio)      references meio(num_meio),
+     constraint fk_apoio_nome foreign key(nome_entidade) references meio(nome_entidade));
+
+create table meio_socorro
+    (num_meio       char(10)    not null,
+     nome_entidade  varchar(10) not null,
+     constraint pk_socorro primary key(nome_entidade, num_meio),
+     constraint fk_socorro_num  foreign key(num_meio)      references meio(num_meio),
+     constraint fk_socorro_nome foreign key(nome_entidade) references meio(nome_entidade));
+
+create table transporta
+    (num_meio             char(10)    not null,
+     nome_entidade        varchar(10) not null,
+     num_vitimas          int,
+     num_processo_socorro int,
+     constraint pk_transporta primary key(num_processo_socorro, nome_entidade, num_meio),
+     constraint fk_transporta_num_meio foreign key(num_meio)             references meio_socorro(num_meio),
+     constraint fk_transporta_nome     foreign key(nome_entidade)        references meio_socorro(nome_entidade),
+     constraint fk_transporta_num_proc foreign key(num_processo_socorro) references processo_socorro(num_processo_socorro));
+    
+create table alocado
+    (num_meio             char(10)    not null,
+     nome_entidade        varchar(10) not null,     
+     num_horas            decimal(5, 2),
+     num_processo_socorro int,
+     constraint pk_alocado primary key(num_processo_socorro, nome_entidade, num_meio),
+     constraint fk_alocado_num_meio foreign key(num_meio)             references meio_apoio(num_meio),
+     constraint fk_alocado_nome     foreign key(nome_entidade)        references meio_apoio(nome_entidade),
+     constraint fk_alocado_num_proc foreign key(num_processo_socorro) references processo_socorro(num_processo_socorro));
+
+create table acciona
+    (num_meio             char(10)    not null,
+     nome_entidade        varchar(10) not null,
+     num_processo_socorro int,
+     constraint pk_acciona primary key(num_processo_socorro, nome_entidade, num_meio),
+     constraint fk_acciona_num_meio foreign key(num_meio)             references meio(num_meio),
+     constraint fk_acciona_nome     foreign key(nome_entidade)        references meio(nome_entidade),
+     constraint fk_acciona_num_proc foreign key(num_processo_socorro) references processo_socorro(num_processo_socorro));
+
+create table coordenador
+    (id_coordenador char(10) not null,
+     constraint pk_coordenador primary key(id_coordenador));
+
+create table audita
+    (id_coordenador       char(10)    not null,
+     num_meio             char(10)    not null,
+     nome_entidade        varchar(10) not null,
+     num_processo_socorro int,
+     data_hora_inicio     timestamp,
+     data_hora_fim        timestamp,
+     data_auditoria       date,
+     texto                varchar(100),
+     constraint pk_audita primary key(id_coordenador, num_meio, nome_entidade, num_processo_socorro),
+     constraint fk_audita_num_meio foreign key(num_meio)             references meio(acciona),
+     constraint fk_audita_nome     foreign key(nome_entidade)        references meio(acciona),
+     constraint fk_audita_num_proc foreign key(num_processo_socorro) references processo_socorro(acciona),
+     constraint fk_audita_id_coord foreign key(id_coordenador)       references coordenador(id_coordenador));
+
+create table solicita
+    (id_coordenador         char(10)  not null,
+     data_hora_inicio_video timestamp not null,
+     num_camara             int       not null,
+     data_hora_inicio       timestamp not null,
+     data_hora_fim          timestamp not null,
+     constraint fk_solicita_id_coord     foreign key(id_coordenador) references coordenador(id_coordenador),
+     constraint fk_solicita_inicio_video foreign key(data_hora_inicio_video) references video(data_hora_inicio_video),
+     constraint fk_solicita_num_camara   foreign key(num_camara) references video(num_camara));
