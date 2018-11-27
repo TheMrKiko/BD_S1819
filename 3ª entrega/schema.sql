@@ -4,18 +4,18 @@ drop table coordenador cascade;
 drop table acciona cascade;
 drop table alocado cascade;
 drop table transporta cascade;
+drop table meio cascade;
 drop table meio_socorro cascade;
 drop table meio_apoio cascade;
 drop table meio_combate cascade;
-drop table meio cascade;
 drop table entidade_meio cascade;
-drop table processo_socorro cascade;
 drop table evento_emergencia cascade;
+drop table processo_socorro cascade;
 drop table vigia cascade;
 drop table localidade cascade;
-drop table segmento_video cascade;
+drop table camara cascade;
 drop table video cascade;
-drop table camera cascade;
+drop table segmento_video cascade;
 
 create table camara 
     (num_camara char(5) not null unique,
@@ -26,7 +26,7 @@ create table video
      data_hora_fim    timestamp not null,
      num_camara       char(5)   not null unique,
      constraint pk_video primary key(data_hora_inicio, num_camara),
-     constraint fk_num_camara foreign key(num_camara) references camara(num_camara)
+     constraint fk_num_camara foreign key(num_camara) references camara(num_camara),
      constraint ck_data_hora check (data_hora_inicio < data_hora_fim));
 
 create table segmento_video
@@ -34,9 +34,9 @@ create table segmento_video
      duracao          varchar(5) not null,
      data_hora_inicio timestamp  not null,
      num_camara       char(5)    not null unique,
-     constraint pk_segmento_video primary key(num_segmento, num_camara),
-     constraint fk_data_hora_inicio foreign key(data_hora_inicio) references video(data_hora_inicio),
-     constraint fk_num_camara foreign key(num_camara) references video(num_camara));
+     constraint pk_segmento_video primary key(num_segmento, data_hora_inicio, num_camara),
+     constraint fk_segmento_video foreign key(data_hora_inicio, num_camara) references video(data_hora_inicio, num_camara)
+     );
 
 create table localidade
     (morada_local varchar(255) not null,
@@ -142,8 +142,10 @@ create table audita
 create table solicita
     (id_coordenador         char(5)  not null,
      data_hora_inicio_video timestamp not null,
-     num_camara             int       not null unique,
+     num_camara             char(5)       not null unique,
      data_hora_inicio       timestamp not null,
      data_hora_fim          timestamp not null,
-     constraint fk_solicita_id_coord     foreign key(id_coordenador) references coordenador(id_coordenador),
-     constraint fk_solicita_inicio_video foreign key(data_hora_inicio_video, num_camara) references video(data_hora_inicio, num_camara));
+     constraint fk_solicita_inicio_video foreign key(data_hora_inicio_video, num_camara) references video(data_hora_inicio, num_camara),
+     constraint fk_solicita_id_coord     foreign key(id_coordenador) references coordenador(id_coordenador));
+     
+
