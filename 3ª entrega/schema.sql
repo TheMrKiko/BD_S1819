@@ -145,7 +145,7 @@ create table solicita
      num_camara             char(5)       not null unique,
      data_hora_inicio       timestamp not null,
      data_hora_fim          timestamp not null,
-     constraint pk_solicita primary key(id_coordenador, data_hora_inicio_video, num_camara)
+     constraint pk_solicita primary key(id_coordenador, data_hora_inicio_video, num_camara),
      constraint fk_solicita_id_coord     foreign key(id_coordenador) references coordenador(id_coordenador),
      constraint fk_solicita_inicio_video foreign key(data_hora_inicio_video, num_camara) references video(data_hora_inicio, num_camara));
 
