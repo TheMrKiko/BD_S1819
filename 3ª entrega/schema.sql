@@ -25,16 +25,17 @@ create table video
     (data_hora_inicio timestamp not null,
      data_hora_fim    timestamp not null,
      num_camara       char(5)   not null unique,
-     constraint pk_data_hora_inicio primary key(data_hora_inicio),
+     constraint pk_video primary key(data_hora_inicio, num_camara),
      constraint fk_num_camara foreign key(num_camara) references camara(num_camara)
-     constraint ck_data_hora check data_hora_inicio < data_hora_fim);
+     constraint ck_data_hora check (data_hora_inicio < data_hora_fim));
 
 create table segmento_video
     (num_segmento     char(5)    not null,
      duracao          varchar(5) not null,
      data_hora_inicio timestamp  not null,
      num_camara       char(5)    not null unique,
-     constraint pk_data_hora_inicio foreign key(data_hora_inicio) references video(data_hora_inicio),
+     constraint pk_segmento_video primary key(num_segmento, num_camara),
+     constraint fk_data_hora_inicio foreign key(data_hora_inicio) references video(data_hora_inicio),
      constraint fk_num_camara foreign key(num_camara) references video(num_camara));
 
 create table localidade
@@ -44,6 +45,7 @@ create table localidade
 create table vigia
     (morada_local varchar(255) not null,
      num_camara   char(5) not null unique,
+     constraint pk_vigia primary key(morada_local, num_camara),
      constraint fk_morada_local foreign key(morada_local) references localidade(morada_local),
      constraint fk_num_camara   foreign key(num_camara)   references camara(num_camara));
 
@@ -69,12 +71,13 @@ create table meio
     (num_meio      char(5)     not null unique,
      nome_meio     varchar(20) not null,
      nome_entidade varchar(20) not null unique,
-     constraint pk_num_meio primary key(num_meio),
+     constraint pk_meio primary key(num_meio, nome_entidade),
      constraint fk_nome_entidade foreign key(nome_entidade) references entidade_meio(nome_entidade));
 
 create table meio_combate
     (num_meio      char(5)     not null unique,
      nome_entidade varchar(20) not null,
+     constraint pk_meio_combate primary key(num_meio, nome_entidade),
      constraint fk_num_meio      foreign key(num_meio)      references meio(num_meio),
      constraint fk_nome_entidade foreign key(nome_entidade) references meio(nome_entidade));
 
