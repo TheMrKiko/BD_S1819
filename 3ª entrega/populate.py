@@ -9,16 +9,22 @@ dates = ["'2015-04-23 15:10:11'", "'2015-04-23 17:10:11'", "'2016-04-23 13:10:11
 entidademeio = ["Forca Aerea", "Bombeiros", "Marinha", "PSP", "GNR", "Exercito", "PJ", "INEM", "Uber", "Glovo", "Taxify", "Sapadores", "Aldeoes", "Camara Municipal", "Junta de Freguesia", "Ciclo Preparatorio", "GIRA", "ATM", "BES", "Banco Alimentar", "Igreja Protestante", "Mergulhadores", "Gays", "SuperDrags"]
 veiculos = ["Carro", "Carrinha", "Ambulancia", "Camiao", "Helicoptero", "Aviao", "Trator", "Trotineta", "Bicicleta", "Carrinho de mao", "Cavalo", "Carroca", "Empilhadora", "Porta paletes", "Autocarro", "Metro", "Comboio", "Carruagem", "Escadas rolantes", "Passadeira", "Skate", "Tuk-tuk", "Maca", "A pe", "VMER", "O Jose", "Elefante", "Papa reformas"]
 meios = []
+meios_apoio = []
+meios_socorro = []
+meios_combate = []
+accionas = []
 shuffleids = list(ids)
 random.shuffle(shuffleids)
 
 #random.sample(population, k)
 #random.choice(lista)
+'''camara'''
 for i in range(100):
 	string = ""
 	string += "insert into camara values ('" + str(ids[i]) + "');"+ '\n'
 	b.write(string)
 
+'''video, segmento_video'''
 for i in range(100):
 	string = ""
 	idn = i % 4
@@ -33,16 +39,19 @@ for i in range(100):
 	string += "insert into segmento_video values ('4', 3600, '"+year+"-"+month+"-01 15:10:11', '" + nuc + "'); \n"
 	b.write(string)
 
+'''localidade'''
 for i in range(len(morada)):	
 	string = ""
 	string += "insert into localidade values ('" + str(morada[i]) + "');"+ '\n'
 	b.write(string)
 
+'''vigia'''
 for i in range(100):	
 	string = ""
 	string += "insert into vigia values ('" + random.choice(morada) + "', '" + str(ids[i]) + "');"+ '\n'
 	b.write(string)
 
+'''processo_socorro, evento_emergencia'''
 for i in range(100):	
 	string = ""
 	string += "insert into processo_socorro values ('" + str(ids[i]) + "');"+ '\n'
@@ -51,42 +60,91 @@ for i in range(100):
 		string += "insert into evento_emergencia values ('" + str(numeros_tele[i*4 + j]) + "', " + dates[datei] + ", '"  + random.choice(nomes) + "', '" + random.choice(morada) + "', '" + str(ids[i]) +  "');\n"
 	b.write(string)
 
+'''entidade_meio'''
 for i in range(len(entidademeio)):
 	string = ""
 	string += "insert into entidade_meio values ('" + str(entidademeio[i]) + "');"+ '\n'
 	b.write(string)
 
+'''meio, meio_combate, meio_apoio, meio_socorro'''
 for i in range(100):
 	string = ""
 	noment = random.choice(entidademeio)
 	meios.append((ids[i], noment))
 	string += "insert into meio values ('" + str(ids[i]) + "', '" + random.choice(veiculos) + ' ' + random.choice(nomes).split()[-1] + "', '" + noment + "');"+ '\n'
 	if int(random.random() + 0.5):
+		meios_combate.append((ids[i], noment))
 		string += "insert into meio_combate values ('" + str(ids[i]) + "', '" + noment + "');\n"
 	if int(random.random() + 0.5):
+		meios_apoio.append((ids[i], noment))
 		string += "insert into meio_apoio values ('" + str(ids[i]) + "', '" + noment + "');\n"
 	if int(random.random() + 0.5):
+		meios_socorro.append((ids[i], noment))
 		string += "insert into meio_socorro values ('" + str(ids[i]) + "', '" + noment + "');\n"
 	b.write(string)
 
-""" for i in range(100):
+'''acciona'''
+for i in range(100):
 	string = ""
 	meio = meios[i]
 	pscorr = shuffleids[i]
-	string += "insert into acciona values (" + str(meio[0]) + ", " + meio[1] + ", " + str(random.choice(ids)) + ");\n"
+	accionas.append((meio[0], meio[1], pscorr))
+	string += "insert into acciona values (" + str(meio[0]) + ", " + meio[1] + ", " + str(pscorr) + ");\n"
 	b.write(string)
 
-for i in range(100):
+'''transporta'''
+for i in range(len(meios_socorro)):
 	string = ""
-	meio = meios[i]
+	meio = meios_socorro[i]
 	string += "insert into transporta values (" + str(meio[0]) + ", " + meio[1] + ", " + str(random.choice(vitimas_horas)) + ", " + str(random.choice(ids)) + ");\n"
 	b.write(string)
 
-for i in range(100):
+'''alocado'''
+for i in range(len(meios_apoio)):
 	string = ""
-	meio = meios[i]
+	meio = meios_apoio[i]
 	string += "insert into alocado values (" + str(meio[0]) + ", " + meio[1] + ", " + str(random.choice(vitimas_horas)) + ", " + str(random.choice(ids)) + ");\n"
-	b.write(string) """
+	b.write(string)
 
+'''coordenador'''
+for i in range(100):
+	string = "insert into coordenador values (" + str(shuffleids[i]) + ");\n"
+	b.write(string)
+
+'''audita'''
+for i in range(100):
+	idcoor = str(shuffleids[i])
+	nummeio = str(accionas[i][0])
+	noment = accionas[i][1]
+	numproc = str(accionas[i][2])
+
+	idn = i % 4
+	year = str(2015 + idn)
+	month = str((i % 12) + 1)
+	n_month = str((i + 1 % 12) + 1)
+	if (eval(month) < 10): month = "0" + month
+	dhinicio = year + "-" + month + "-01 15:10:11"
+	dhfim = year + "-" + n_month + "-01 15:10:11"
+
+	data = "2017-11-23"
+	texto = "it's wednesday my dudes"
+
+	string = "insert into audita values (" + idcoor + ", " + nummeio + ", " + noment + ", " + numproc + ", " + dhinicio + ", " + dhfim + ", " + data + ", " + texto + ");\n"
+	b.write(string)
+
+'''solicita'''
+for i in range(100):
+	idcoor = str(shuffleids[i])
+
+	idn = i % 4
+	year = str(2015 + idn)
+	month = str((i % 12)+1)
+	n_month = str((i + 1 % 12) + 1)
+	if (eval(month) < 10): month = "0" + month
+
+	nuc = str(ids[i])
+
+	string = "insert into solicita values (" + idcoor + ", " + year+"-"+month+"-01 15:10:11" + ", " + nuc + ", " + year+"-"+n_month+"-01 15:10:11" + ", " + year+"-"+n_month+"-02 15:10:11" + ");\n"
+	b.write(string)
 
 b.close()

@@ -136,9 +136,9 @@ create table audita
      constraint ck_data_autoria check (data_auditoria <= now()));
 
 create table solicita
-    (id_coordenador         char(5)  not null,
+    (id_coordenador         char(5)   not null,
      data_hora_inicio_video timestamp not null,
-     num_camara             char(5)       not null unique,
+     num_camara             char(5)   not null unique,
      data_hora_inicio       timestamp not null,
      data_hora_fim          timestamp not null,
      constraint pk_solicita primary key(id_coordenador, data_hora_inicio_video, num_camara),
