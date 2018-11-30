@@ -118,7 +118,7 @@ if (proc_oli_hosp == ""):
 	meio = meios[100]
 	proc_oli_hosp = shuffleids[100]
 	accionas.append((meio[0], meio[1], proc_oli_hosp))
-	string += "insert into acciona values ('" + str(meio[0]) + "', '" + meio[1] + "', '" + proc_oli_hosp + "');\n"
+	string += "insert into acciona values ('" + str(meio[0]) + "', '" + meio[1] + "', '" + str(proc_oli_hosp) + "');\n"
 	b.write(string)
 
 '''transporta
