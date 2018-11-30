@@ -31,7 +31,7 @@
         "transporta" => ["num_meio", "nome_entidade", "num_vitimas", "num_processo_socorro"],
         "alocado" => ["num_meio", "nome_entidade", "num_horas", "num_processo_socorro"],
         "acciona" => ["num_meio", "nome_entidade", "num_processo_socorro"],
-        "coordenador" => ["id_coordenador"]
+        "coordenador" => ["id_coordenador"],
         "audita" => ["id_coordenador", "num_meio", "nome_entidade", "num_processo_socorro", "data_hora_inicio", "data_hora_fim", "data_auditoria", "texto"],
         "solicita" => ["id_coordenador", "data_hora_inicio_video", "num_camara", "data_hora_inicio", "data_hora_fim"]
     ];
@@ -52,7 +52,7 @@
         "transporta" => ["num_meio", "nome_entidade", "num_processo_socorro"],
         "alocado" => ["num_meio", "nome_entidade", "num_processo_socorro"],
         "acciona" => ["num_meio", "nome_entidade", "num_processo_socorro"],
-        "coordenador" => ["id_coordenador"]
+        "coordenador" => ["id_coordenador"],
         "audita" => ["id_coordenador", "num_meio", "nome_entidade", "num_processo_socorro"],
         "solicita" => ["id_coordenador", "data_hora_inicio_video", "num_camara"]
     ];
@@ -103,10 +103,15 @@
                 echo("<td>{$row[$d]}</td>\n");
             }
 
+            $htmlqueries = "";
+            foreach ($tableKeys[$tableName] as $k) {
+                $htmlqueries = $htmlqueries . "&" . $k . "=" . $row[$k];
+            }
+
             if ($canEdit)
-                echo("<td><a href=\"edit.php?table={$tableName}\">Edit</a></td>\n");
+                echo("<td><a href=\"edit.php?table={$tableName}{$htmlqueries}\">Edit</a></td>\n");
             if ($canRem)
-                echo("<td><a href=\"remove.php?table={$tableName}\">Remove</a></td>\n");
+                echo("<td><a href=\"remove.php?table={$tableName}{$htmlqueries}\">Remove</a></td>\n");
 
             echo("</tr>\n");
         }
