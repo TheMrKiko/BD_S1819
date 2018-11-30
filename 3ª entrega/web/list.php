@@ -26,7 +26,7 @@
         "transporta" => [],
         "alocado" => [],
         "acciona" => [],
-        "coordenador" => []
+        "coordenador" => [],
         "audita" => [],
         "solicita" => []
     ];
