@@ -1,11 +1,18 @@
-\documentclass[12pt,a4paper]{article}
+\documentclass[10pt,a4paper]{article}
 \usepackage[utf8]{inputenc}
 \usepackage[portuguese]{babel}
 \usepackage{graphicx, hyperref, verbatim, multicol, amsmath, listings}
 
+\addtolength{\oddsidemargin}{-1.4in}
+\addtolength{\evensidemargin}{-1.4in}
+\addtolength{\textwidth}{2.8in}
+\addtolength{\topmargin}{-.875in}
+\addtolength{\textheight}{1.75in}
+
 \author{Grupo 47 \and Daniel Fernandes 86400 \& \\Francisco Sousa 86416 \& Henrique Ferreira 86432}
 \title{Projeto de Bases de Dados, Parte 3}
 \begin{document}
+
 \maketitle
 
 \begin{center}
@@ -66,7 +73,8 @@ create table segmento_video
      data_hora_inicio timestamp  not null,
      num_camara       char(5)    not null,
      constraint pk_segmento_video primary key(num_segmento, data_hora_inicio, num_camara),
-     constraint fk_segmento_video foreign key(data_hora_inicio, num_camara) references video(data_hora_inicio, num_camara));
+     constraint fk_segmento_video foreign key(data_hora_inicio, num_camara) 
+        references video(data_hora_inicio, num_camara));
 
 create table localidade
     (morada_local varchar(255) not null,
@@ -77,7 +85,7 @@ create table vigia
      num_camara   char(5) not null unique,
      constraint pk_vigia primary key(morada_local, num_camara),
      constraint fk_morada_local foreign key(morada_local) references localidade(morada_local),
-     constraint fk_num_camara   foreign key(num_camara)   references camara(num_camara));
+     constraint fk_num_camara foreign key(num_camara) references camara(num_camara));
 
 create table processo_socorro
     (num_processo_socorro char(5) not null unique,
@@ -90,8 +98,9 @@ create table evento_emergencia
      morada_local         varchar(255) not null,
      num_processo_socorro char(5),
      constraint pk_evento_emergencia primary key(num_telefone, instante_chamada),
-     constraint fk_morada_local         foreign key(morada_local)         references localidade(morada_local),
-     constraint fk_num_processo_socorro foreign key(num_processo_socorro) references processo_socorro(num_processo_socorro));
+     constraint fk_morada_local foreign key(morada_local) references localidade(morada_local),
+     constraint fk_num_processo_socorro foreign key(num_processo_socorro) 
+        references processo_socorro(num_processo_socorro));
 
 create table entidade_meio
     (nome_entidade varchar(20) not null unique,
@@ -108,19 +117,19 @@ create table meio_combate
     (num_meio      char(5)     not null,
      nome_entidade varchar(255) not null,
      constraint pk_meio_combate primary key(num_meio, nome_entidade),
-     constraint fk_meio      foreign key(num_meio, nome_entidade)      references meio(num_meio, nome_entidade));
+     constraint fk_meio foreign key(num_meio, nome_entidade) references meio(num_meio, nome_entidade));
 
 create table meio_apoio
     (num_meio       char(5)    not null,
      nome_entidade  varchar(255) not null,
      constraint pk_apoio primary key(nome_entidade, num_meio),
-     constraint fk_meio      foreign key(num_meio, nome_entidade)      references meio(num_meio, nome_entidade));
+     constraint fk_meio foreign key(num_meio, nome_entidade) references meio(num_meio, nome_entidade));
 
 create table meio_socorro
-    (num_meio       char(5)    not null,
+    (num_meio       char(5)      not null,
      nome_entidade  varchar(255) not null,
      constraint pk_socorro primary key(nome_entidade, num_meio),
-     constraint fk_meio      foreign key(num_meio, nome_entidade)      references meio(num_meio, nome_entidade));
+     constraint fk_meio foreign key(num_meio, nome_entidade) references meio(num_meio, nome_entidade));
 
 create table transporta
     (num_meio             char(5)    not null,
@@ -128,8 +137,10 @@ create table transporta
      num_vitimas          int,
      num_processo_socorro char(5),
      constraint pk_transporta primary key(num_processo_socorro, nome_entidade, num_meio),
-     constraint fk_transporta_num_meio foreign key(num_meio, nome_entidade) references meio_socorro(num_meio, nome_entidade),
-     constraint fk_transporta_num_proc foreign key(num_processo_socorro) references processo_socorro(num_processo_socorro));
+     constraint fk_transporta_num_meio foreign key(num_meio, nome_entidade)
+        references meio_socorro(num_meio, nome_entidade),
+     constraint fk_transporta_num_proc foreign key(num_processo_socorro)
+        references processo_socorro(num_processo_socorro));
     
 create table alocado
     (num_meio             char(5)    not null,
@@ -137,16 +148,20 @@ create table alocado
      num_horas            decimal(5, 2),
      num_processo_socorro char(5),
      constraint pk_alocado primary key(num_processo_socorro, nome_entidade, num_meio),
-     constraint fk_alocado_num_meio foreign key(num_meio, nome_entidade) references meio_apoio(num_meio, nome_entidade),
-     constraint fk_alocado_num_proc foreign key(num_processo_socorro) references processo_socorro(num_processo_socorro));
+     constraint fk_alocado_num_meio foreign key(num_meio, nome_entidade) 
+        references meio_apoio(num_meio, nome_entidade),
+     constraint fk_alocado_num_proc foreign key(num_processo_socorro) 
+        references processo_socorro(num_processo_socorro));
 
 create table acciona
     (num_meio             char(5)    not null,
      nome_entidade        varchar(20) not null,
      num_processo_socorro char(5),
      constraint pk_acciona primary key(num_processo_socorro, nome_entidade, num_meio),
-     constraint fk_acciona_num_meio foreign key(num_meio, nome_entidade)             references meio(num_meio, nome_entidade),
-     constraint fk_acciona_num_proc foreign key(num_processo_socorro) references processo_socorro(num_processo_socorro));
+     constraint fk_acciona_num_meio foreign key(num_meio, nome_entidade)
+        references meio(num_meio, nome_entidade),
+     constraint fk_acciona_num_proc foreign key(num_processo_socorro) 
+        references processo_socorro(num_processo_socorro));
 
 create table coordenador
     (id_coordenador char(5) not null,
@@ -162,7 +177,8 @@ create table audita
      data_auditoria       date,
      texto                varchar(100),
      constraint pk_audita primary key(id_coordenador, num_meio, nome_entidade, num_processo_socorro),
-     constraint fk_audita_num_meio foreign key(num_meio, nome_entidade, num_processo_socorro) references acciona(num_meio, nome_entidade, num_processo_socorro),
+     constraint fk_audita_num_meio foreign key(num_meio, nome_entidade, num_processo_socorro)
+        references acciona(num_meio, nome_entidade, num_processo_socorro),
      constraint fk_audita_id_coord foreign key(id_coordenador) references coordenador(id_coordenador),
      constraint ck_data_autoria check (data_auditoria <= now()));
 
@@ -174,7 +190,8 @@ create table solicita
      data_hora_fim          timestamp not null,
      constraint pk_solicita primary key(id_coordenador, data_hora_inicio_video, num_camara),
      constraint fk_solicita_id_coord     foreign key(id_coordenador) references coordenador(id_coordenador),
-     constraint fk_solicita_inicio_video foreign key(data_hora_inicio_video, num_camara) references video(data_hora_inicio, num_camara));
+     constraint fk_solicita_inicio_video foreign key(data_hora_inicio_video, num_camara)
+        references video(data_hora_inicio, num_camara));
 
 \end{verbatim}
 
@@ -184,37 +201,32 @@ Para a população da base de dados foi criado um script em Python que cria o po
 
 \paragraph{1.}
 \begin{verbatim}
-select * from 
-    (select num_processo_socorro, count(*) from acciona group by num_processo_socorro) as c 
-        cross join 
-            (select max(count) from 
-                (select num_processo_socorro, count(*) from acciona group by num_processo_socorro) as b) as a 
-                    where (count = max);
+select * from (select num_processo_socorro, count(*) from acciona 
+group by num_processo_socorro) as c cross join 
+(select max(count) from (select num_processo_socorro, count(*) from acciona 
+group by num_processo_socorro) as b) as a where (count = max);
 \end{verbatim}
 
 \paragraph{2.}
 \begin{verbatim}
-select  * from 
-    (select * from 
-        (select nome_entidade, count(*) from 
-            (select * from (acciona natural join evento_emergencia) as b 
-                where instante_chamada > '2018-06-21 00:00:00' and instante_chamada < '2018-09-22 23:59:59') as c group by nome_entidade) as b 
-                    cross join 
-                        (select max(count) from 
-                            (select nome_entidade, count(*) from 
-                                (select * from 
-  (acciona natural join evento_emergencia) as b where instante_chamada > '2018-06-21 00:00:00' and instante_chamada < '2018-09-22 23:59:59') as c group by nome_entidade) as d) as e) as ahhhhhh
+select  * from (select * from (select nome_entidade, count(*) from 
+(select * from (acciona natural join evento_emergencia) as b 
+where instante_chamada > '2018-06-21 00:00:00' and instante_chamada < '2018-09-22 23:59:59')
+as c group by nome_entidade) as b cross join 
+(select max(count) from (select nome_entidade, count(*) from 
+(select * from (acciona natural join evento_emergencia) as b where instante_chamada > '2018-06-21 00:00:00' 
+and instante_chamada < '2018-09-22 23:59:59') as c group by nome_entidade) as d) as e) as ahhhhhh
 where count = max;
+
 \end{verbatim}
 
 \paragraph{3.}
 \begin{verbatim}
-select num_processo_socorro from 
-(evento_emergencia natural join 
-(select num_processo_socorro from acciona 
-except 
+select num_processo_socorro from (evento_emergencia natural join 
+(select num_processo_socorro from acciona except 
 select num_processo_socorro from (acciona natural join audita)) as b) 
-where (morada_local = 'Oliveira do Hospital' and instante_chamada > '2018-01-01 00:00:00' and instante_chamada < '2018-12-31 23:59:59');
+where (morada_local = 'Oliveira do Hospital' 
+and instante_chamada > '2018-01-01 00:00:00' and instante_chamada < '2018-12-31 23:59:59');
 \end{verbatim}
 
 \paragraph{4.}
@@ -227,8 +239,7 @@ data_hora_inicio > '2018-08-01 00:00:00' and data_hora_fim < '2018-08-31 23:59:5
 
 \paragraph{5.}
 \begin{verbatim}
-select nome_entidade  from 
-(meio_combate natural join 
+select nome_entidade from (meio_combate natural join 
 (select num_meio from meio_combate except select num_meio from  
 (select num_meio from acciona except select num_meio from 
 (select num_meio from acciona except select num_meio from meio_apoio) as b) as c) as marrucho);
