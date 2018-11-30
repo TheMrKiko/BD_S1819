@@ -24,7 +24,7 @@
         "meio_socorro" => ["a", "r", "e"],
         "transporta" => [],
         "alocado" => [],
-        "acciona" => [],
+        "acciona" => ["a"],
         "coordenador" => [],
         "audita" => [],
         "solicita" => []

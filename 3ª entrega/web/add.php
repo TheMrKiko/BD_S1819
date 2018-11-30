@@ -5,7 +5,8 @@
     $tableName = $_REQUEST['table'];
 
     $additionalQueries = [
-        "evento_emergencia" => ["", []]
+        "processo_socorro" =>
+            ""
     ];
 
     $tablesKeys = [
@@ -53,7 +54,7 @@
     $tableKeys = $tablesKeys[$tableName];
     $namesCol = $collumnNames[$tableName];
 
-    $addQuery = ["", []];
+    $addQuery = "";
     if (array_key_exists($tableName, $additionalQueries))
         $addQuery = $additionalQueries[$tableName];
 
@@ -66,31 +67,39 @@
         $db = new PDO("pgsql:host=$host;dbname=$dbname", $user, $password);
         $db->setAttribute(PDO::ATTR_ERRMODE, PDO::ERRMODE_EXCEPTION);
 
-        $sql = $addQuery[0] . "INSERT INTO $tableName VALUES (";
+        $sql = $addQuery . "INSERT INTO $tableName VALUES (";
         $separator = "";
         foreach ($namesCol as $c) {
             $sql = $sql . $separator . ":" . $c;
             $separator = ", ";
         }
 
-        $sql = $sql . ");";
-        $executeSubst = $addQuery[1];
-
-        foreach ($namesCol as $c) {
-            $value = $_REQUEST[$c];
-            if ($value == "null") $value = null;
-            $executeSubst[":" . $c] = $value;
-        }
-        
+        $sql = $sql . ");";        
         
         $sqlarray = explode("&", $sql);
         $result = $db->beginTransaction();
 
         foreach ($sqlarray as $query) {   
+            echo("<p>$query</p>");
+
+            $executeSubst = [];
+            $sql_string = explode(" ", $query);
+
+            foreach ($sql_string as $split) {
+                if ($split[0] == "(") $split = substr($split, 1, strlen($split) - 1);
+                if ($split[0] == ":") {
+                    $word = substr($split, 1);
+                    if (substr($word, strlen($word) - 1, 1) == ";") $word = substr($word, 0, strlen($word) - 1);
+                    if (substr($word, strlen($word) - 1, 1) == ",") $word = substr($word, 0, strlen($word) - 1);
+                    if (substr($word, strlen($word) - 1, 1) == ")") $word = substr($word, 0, strlen($word) - 1);
+                    $executeSubst[":" . $word] = $_REQUEST[$word];
+                }
+            }
             $result = $db->prepare($query);
             
             $result->execute($executeSubst);
         }
+
         
         $result = $db->commit();
         

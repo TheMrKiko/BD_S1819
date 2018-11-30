@@ -10,13 +10,13 @@
     $consult = $_REQUEST['consult'];
 
     $consultTableNames = [
-        "processo_socorro" => "acciona",
-        "local_incendio" => "acciona"
+        "processo_socorro" => "meio",
+        "local_incendio" => "meio_socorro"
     ];
 
     $consultSQLQuery = [
         "processo_socorro" => "select * from acciona where num_processo_socorro = :num_processo_socorro;",
-        "local_incendio" => "SELECT;"
+        "local_incendio" => "select num_meio, nome_entidade from transporta natural join (evento_emergencia natural join processo_socorro) as b where morada_local = :morada_local"
     ];
 
     $consultParams = [

@@ -29,12 +29,40 @@
                     "solicita" => ["id_coordenador", "data_hora_inicio_video", "num_camara", "data_hora_inicio", "data_hora_fim"]
                 ];
 
+                $tablesKeys = [
+                    "camara" => ["num_camara"],
+                    "video" => ["data_hora_inicio", "num_camara"],
+                    "segmento_video" => ["num_segmento", "data_hora_inicio", "num_camara"],
+                    "localidade" => ["morada_local"],
+                    "vigia" => ["morada_local", "num_camara"],
+                    "processo_socorro" => ["num_processo_socorro"],
+                    "evento_emergencia" => ["num_telefone", "instante_chamada"],
+                    "entidade_meio" => ["nome_entidade"],
+                    "meio" => ["num_meio", "nome_entidade"],
+                    "meio_combate" => ["num_meio", "nome_entidade"],
+                    "meio_apoio" => ["num_meio", "nome_entidade"],
+                    "meio_socorro" => ["num_meio", "nome_entidade"],
+                    "transporta" => ["num_meio", "nome_entidade", "num_processo_socorro"],
+                    "alocado" => ["num_meio", "nome_entidade", "num_processo_socorro"],
+                    "acciona" => ["num_meio", "nome_entidade", "num_processo_socorro"],
+                    "coordenador" => ["id_coordenador"],
+                    "audita" => ["id_coordenador", "num_meio", "nome_entidade", "num_processo_socorro"],
+                    "solicita" => ["id_coordenador", "data_hora_inicio_video", "num_camara"]
+                ];
+
                 $namesCol = $collumnNames[$tableName];
 
                 foreach ($namesCol as $field) {
                     echo("<p>$field: <input type='text' name='$field'/></p>");
                 }
-
+                
+                if ($tableName == "processo_socorro") {
+                    echo("<h4>Associar a evento de emergencia:</h4>");
+                    $procScorr = $tablesKeys["evento_emergencia"];
+                    foreach ($procScorr as $field) {
+                        echo("<p>$field: <input type='text' name='$field'/></p>");
+                    }
+                }
             ?>
             <p><input type="submit" value="Adicionar"/></p>
         </form>

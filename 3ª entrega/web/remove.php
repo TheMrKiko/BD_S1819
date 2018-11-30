@@ -6,29 +6,30 @@
     $tableName = $_REQUEST['table'];
 
     $additionalQueries = [
-        "entidade_meio" => [
+        "entidade_meio" =>
             "DELETE FROM transporta WHERE num_processo_socorro = :num_processo_socorro;&
             DELETE FROM acciona WHERE num_processo_socorro = :num_processo_socorro;&
             DELETE FROM alocado WHERE num_processo_socorro = :num_processo_socorro;&
             DELETE FROM meio_combate WHERE nome_entidade = :nome_entidade;&
             DELETE FROM meio_socorro WHERE nome_entidade = :nome_entidade;&
             DELETE FROM meio_apoio WHERE nome_entidade = :nome_entidade;&
-            DELETE FROM meio WHERE nome_entidade = :nome_entidade;&", []],
-        "meio" => [
-            " DELETE FROM transporta WHERE num_processo_socorro = :num_processo_socorro;&
+            DELETE FROM meio WHERE nome_entidade = :nome_entidade;&",
+        "meio" =>
+            "DELETE FROM transporta WHERE num_processo_socorro = :num_processo_socorro;&
             DELETE FROM acciona WHERE num_processo_socorro = :num_processo_socorro;&
             DELETE FROM alocado WHERE num_processo_socorro = :num_processo_socorro;&
             DELETE FROM meio_combate WHERE nome_entidade = :nome_entidade;&
             DELETE FROM meio_socorro WHERE nome_entidade = :nome_entidade;&
-            DELETE FROM meio_apoio WHERE nome_entidade = :nome_entidade;&", []],
-        "localidade" => [
+            DELETE FROM meio_apoio WHERE nome_entidade = :nome_entidade;&",
+        "localidade" =>
             "DELETE FROM evento_emergencia WHERE morada_local = :morada_local;&
-            DELETE FROM vigia WHERE morada_local = :morada_local;&",[]],
-        "processo_socorro" => [
-            "DELETE FROM transporta WHERE num_processo_socorro = :num_processo_socorro;&
+            DELETE FROM vigia WHERE morada_local = :morada_local;&",
+        "processo_socorro" =>
+            "DELETE FROM audita WHERE num_processo_socorro = :num_processo_socorro;&
+            DELETE FROM transporta WHERE num_processo_socorro = :num_processo_socorro;&
             DELETE FROM acciona WHERE num_processo_socorro = :num_processo_socorro;&
             DELETE FROM alocado WHERE num_processo_socorro = :num_processo_socorro;&
-            UPDATE evento_emergencia SET num_processo_socorro = NULL WHERE num_processo_socorro = :num_processo_socorro;&",[]]
+            UPDATE evento_emergencia SET num_processo_socorro = NULL WHERE num_processo_socorro = :num_processo_socorro;&"
     ];
 
     $tablesKeys = [
@@ -54,7 +55,7 @@
 
     $tableKeys = $tablesKeys[$tableName];
 
-    $addQuery = ["", []];
+    $addQuery = "";
     if (array_key_exists($tableName, $additionalQueries))
         $addQuery = $additionalQueries[$tableName];
 
@@ -67,7 +68,7 @@
         $db = new PDO("pgsql:host=$host;dbname=$dbname", $user, $password);
         $db->setAttribute(PDO::ATTR_ERRMODE, PDO::ERRMODE_EXCEPTION);
 
-        $sql = $addQuery[0] . "DELETE FROM $tableName WHERE";
+        $sql = $addQuery . "DELETE FROM $tableName WHERE";
         $separator = " ";
         foreach ($tableKeys as $k) {
             $sql = $sql . $separator . $k . " = :" . $k;
@@ -75,16 +76,23 @@
         }
 
         $sql = $sql . ";";
-        $executeSubst = $addQuery[1];
-
-        foreach ($tableKeys as $k) {
-            $executeSubst[":" . $k] = $_REQUEST[$k];
-        }
 
         $sqlarray = explode("&", $sql);
         $result = $db->beginTransaction();
-
+        
         foreach ($sqlarray as $query) {   
+            echo("<p>$query</p>");
+
+            $executeSubst = [];
+            $sql_string = explode(" ", $query);
+
+            foreach ($sql_string as $split) {
+                if ($split[0] == ":") {
+                    $word = substr($split, 1);
+                    if (substr($word, strlen($word) - 1, 1) == ";") $word = substr($word, 0, strlen($word) - 1);
+                    $executeSubst[":" . $word] = $_REQUEST[$word];
+                }
+            }
             $result = $db->prepare($query);
             
             $result->execute($executeSubst);
