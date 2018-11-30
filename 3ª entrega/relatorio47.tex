@@ -99,7 +99,7 @@ create table evento_emergencia
      instante_chamada     timestamp not null,
      nome_pessoa          varchar(255) not null,
      morada_local         varchar(255) not null,
-     num_processo_socorro char(5),
+     num_processo_socorro char(5) not null,
      constraint pk_evento_emergencia primary key(num_telefone, instante_chamada),
      constraint fk_morada_local foreign key(morada_local) references localidade(morada_local),
      constraint fk_num_processo_socorro foreign key(num_processo_socorro) 
@@ -256,6 +256,24 @@ select num_processo_socorro from (acciona natural join processo_socorro));
 \end{verbatim}
 
 \section{Desenvolvimento da Aplicação}
+A "entrada" da nossa aplicação é um ficheiro \textbf{index.html} que têm links para tudo o resto,
+separados por duas seções:
+
+\subsection{Ver}
+Tem todas as tabelas listadas, permitindo consultá-las na íntegra.
+Se tiver sido pedido, ainda é possível \textit{adicionar}, \textit{editar} ou \textit{remover}
+entradas de cada tabela. 
+
+A consulta é conseguida com o ficheiro \textbf{list.php} que, por sua vez, constrói os links
+para as operações:
+
+\subsubsection{Adicionar} Pede os valores necessários ao utilizador (\textbf{addform.php}) e adiciona (\textbf{add.php});
+\subsubsection{Editar} Mostra todos os campos alteráveis ao utilizador (\textbf{editform.php}) e edita o que este alterou (\textbf{edit.php});
+\subsubsection{Remove} Apaga todas as entradas necessárias de cada tabela, para manter as restrições (\textbf{remove.php}).
+
+\subsection{Consultar}
+Tem as duas consultas pedidas no enunciado. Para cada uma delas, pergunta ao utilizador o valor
+do campo a procurar (\textbf{consultform.php} e apresenta a consulta (\textbf{consult.php}).
 
 
 
