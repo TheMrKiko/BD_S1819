@@ -4,7 +4,7 @@
     </style>
     <body>
     <a href="index.html">< Back</a>
-    <h3>Lista <i><?=$_REQUEST['table']?></i></h3>
+    <h3>Tabela <i><?=$_REQUEST['table']?></i></h3>
 
 <?php
     $tableName = $_REQUEST['table'];
@@ -16,9 +16,9 @@
         "localidade" => ["a", "r"],
         "vigia" => [],
         "processo_socorro" => ["a", "r"],
-        "evento_emergencia" => ["a", "r"],
+        "evento_emergencia" => ["a", "r", "e"],//oi
         "entidade_meio" => ["a", "r"],
-        "meio" => ["a", "r"],
+        "meio" => ["a", "r", "e"],//oi
         "meio_combate" => ["a", "r", "e"],
         "meio_apoio" => ["a", "r", "e"],
         "meio_socorro" => ["a", "r", "e"],
@@ -89,15 +89,18 @@
         $user ="ist186416";
         $password = "12345678";
         $dbname = $user;
-    
+        
         $db = new PDO("pgsql:host=$host;dbname=$dbname", $user, $password);
         $db->setAttribute(PDO::ATTR_ERRMODE, PDO::ERRMODE_EXCEPTION);
-     
+        
         $sql = "SELECT * from $tableName";
         
         $result = $db->prepare($sql);
         $result->execute();
-    
+        
+        if ($canAdd)
+            echo("<a href=\"addform.php?table={$tableName}{$htmlqueries}\">Adicionar</a>\n");
+
         echo("<table border=\"0\" cellspacing=\"5\">\n");
 
         echo("<tr>\n");
@@ -124,9 +127,9 @@
             }
 
             if ($canEdit)
-                echo("<td><a href=\"edit.php?table={$tableName}{$htmlqueries}\">Edit</a></td>\n");
+                echo("<td><a href=\"edit.php?table={$tableName}{$htmlqueries}\">Editar</a></td>\n");
             if ($canRem)
-                echo("<td><a href=\"remove.php?table={$tableName}{$htmlqueries}\">Remove</a></td>\n");
+                echo("<td><a href=\"remove.php?table={$tableName}{$htmlqueries}\">Remover</a></td>\n");
 
             echo("</tr>\n");
         }
