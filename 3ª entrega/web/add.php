@@ -77,7 +77,9 @@
         $executeSubst = $addQuery[1];
 
         foreach ($namesCol as $c) {
-            $executeSubst[":" . $c] = $_REQUEST[$c];
+            $value = $_REQUEST[$c];
+            if ($value == "null") $value = null;
+            $executeSubst[":" . $c] = $value;
         }
         
         

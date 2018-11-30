@@ -84,8 +84,13 @@
         $executeSubst = $addQuery[1];
 
         foreach ($namesCol as $c) {
-            $executeSubst[":" . $c] = $_REQUEST[$c];
-            $executeSubst[":" . $c . "_old"] = $_REQUEST[$c . "+old"];
+            $value = $_REQUEST[$c];
+            if ($value == "null") $value = null;
+            $executeSubst[":" . $c] = $value;
+
+            $value = $_REQUEST[$c . "+old"];
+            if ($value == "null") $value = null;
+            $executeSubst[":" . $c . "_old"] = $value;
         }
         
         $sqlarray = explode("&", $sql);
