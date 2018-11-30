@@ -46,10 +46,13 @@ for i in range(len(morada)):
 	b.write(string)
 
 '''vigia'''
-for i in range(100):	
+for i in range(99):	
 	string = ""
 	string += "insert into vigia values ('" + random.choice(morada) + "', '" + str(ids[i]) + "');"+ '\n'
 	b.write(string)
+
+string = "insert into vigia values ('Monchique', '" + str(ids[99]) + "');"+ '\n'
+b.write(string)
 
 '''processo_socorro, evento_emergencia'''
 for i in range(100):	
@@ -57,7 +60,7 @@ for i in range(100):
 	string += "insert into processo_socorro values ('" + str(ids[i]) + "');"+ '\n'
 	for j in range(int(random.random()*4)):
 		datei = int(j * 36/4) + int(random.random()*36/4)
-		string += "insert into evento_emergencia values ('" + str(numeros_tele[i*4 + j]) + "', " + dates[datei] + ", '"  + random.choice(nomes) + "', '" + random.choice(morada) + "', '" + str(ids[i]) +  "');\n"
+		string += "insert into evento_e mergencia values ('" + str(numeros_tele[i*4 + j]) + "', " + dates[datei] + ", '"  + random.choice(nomes) + "', '" + random.choice(morada) + "', '" + str(ids[i]) +  "');\n"
 	b.write(string)
 
 '''entidade_meio'''
@@ -128,7 +131,7 @@ for i in range(90):
 	dhinicio = year + "-" + month + "-01 15:10:11"
 	dhfim = year + "-" + n_month + "-01 15:10:11"
 
-	data = "2017-11-23"
+	data = "2018-11-28"
 	texto = "it is wednesday my dudes"
 
 	string = "insert into audita values ('" + idcoor + "', '" + nummeio + "', '" + noment + "', '" + numproc + "', '" + dhinicio + "', '" + dhfim + "', '" + data + "', '" + texto + "');\n"
