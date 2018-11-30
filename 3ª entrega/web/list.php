@@ -11,8 +11,24 @@
     $tableName = $_REQUEST['table'];
 
     $tablePermissions = [
+        "camara" => [],
+        "video" => [],
+        "segmento_video" => [],
         "localidade" => ["a", "r"],
-        "acciona" => []
+        "vigia" => [],
+        "processo_socorro" => ["a", "r"],
+        "evento_emergencia" => ["a", "r"],
+        "entidade_meio" => ["a", "r"],
+        "meio" => ["a", "r"],
+        "meio_combate" => ["a", "r", "e"],
+        "meio_apoio" => ["a", "r", "e"],
+        "meio_socorro" => ["a", "r", "e"],
+        "transporta" => [],
+        "alocado" => [],
+        "acciona" => [],
+        "coordenador" => []
+        "audita" => [],
+        "solicita" => []
     ];
 
     $collumnNames = [

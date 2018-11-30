@@ -33,8 +33,8 @@ for i in range(100):
 	if (eval(month) < 10): month = "0" + month
 	nuc = str(ids[i])
 	string += "insert into video values ('"+year+"-"+month+"-01 15:10:11', '"+year+"-"+month+"-01 19:10:11', '" + nuc + "'); \n"
-	string += "insert into segmento_video values ('0', 3600, '"+year+"-"+month+"-01 15:10:11', '" + nuc + "'); \n"
 	string += "insert into segmento_video values ('1', 3600, '"+year+"-"+month+"-01 15:10:11', '" + nuc + "'); \n"
+	string += "insert into segmento_video values ('2', 3600, '"+year+"-"+month+"-01 15:10:11', '" + nuc + "'); \n"
 	string += "insert into segmento_video values ('3', 3600, '"+year+"-"+month+"-01 15:10:11', '" + nuc + "'); \n"
 	string += "insert into segmento_video values ('4', 3600, '"+year+"-"+month+"-01 15:10:11', '" + nuc + "'); \n"
 	b.write(string)
