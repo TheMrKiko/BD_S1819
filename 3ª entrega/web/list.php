@@ -3,9 +3,8 @@
         td {text-align: center;}
     </style>
     <body>
-    <h3><?php
-        echo("Lista <i>" . $_REQUEST['table'] . "</i>");
-    ?></h3>
+    <a href="index.html">< Back</a>
+    <h3>Lista <i><?=$_REQUEST['table']?></i></h3>
 
 <?php
     $tableName = $_REQUEST['table'];

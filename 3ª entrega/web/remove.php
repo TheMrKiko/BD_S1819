@@ -1,10 +1,11 @@
 <html>
     <body>
+    <a href="list.php?table=<?=$_REQUEST['table']?>">< Back</a>
 <?php
     $tableName = $_REQUEST['table'];
 
     $additionalQueries = [
-        "acciona" => ["", []]
+        "evento_emergencia" => ["", []]
     ];
 
     $tableKeys = [
@@ -29,7 +30,7 @@
     ];
 
     $addQuery = ["", []];
-    if (in_array($tableName, $additionalQueries))
+    if (array_key_exists($tableName, $additionalQueries))
         $addQuery = $additionalQueries[$tableName];
 
     try
@@ -42,21 +43,23 @@
         $db->setAttribute(PDO::ATTR_ERRMODE, PDO::ERRMODE_EXCEPTION);
 
         $sql = $addQuery[0] . "DELETE FROM $tableName WHERE";
+        $separator = " ";
         foreach ($tableKeys[$tableName] as $k) {
-            $sql = $sql . " " . $k . " = :" . $k;
+            $sql = $sql . $separator . $k . " = :" . $k;
+            $separator = " and ";
         }
 
         $sql = $sql . ";";
         $executeSubst = $addQuery[1];
-        
+
         foreach ($tableKeys[$tableName] as $k) {
             $executeSubst[":" . $k] = $_REQUEST[$k];
         }
         
         echo("<p>$sql</p>");
 
-        //$result = $db->prepare($sql);
-        //$result->execute([':balance' => $balance, ':account_number' => $account_number]);
+        $result = $db->prepare($sql);
+        $result->execute($executeSubst);
         
         $db = null;
     }
