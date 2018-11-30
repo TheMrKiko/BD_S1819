@@ -32,6 +32,9 @@ for i in range(100):
 	month = str((i % 12)+1)
 	if (eval(month) < 10): month = "0" + month
 	nuc = str(ids[i])
+	if nuc == "99":
+		year = "2018"
+		month = "08"
 	string += "insert into video values ('"+year+"-"+month+"-01 15:10:11', '"+year+"-"+month+"-01 19:10:11', '" + nuc + "'); \n"
 	string += "insert into segmento_video values ('1', 3600, '"+year+"-"+month+"-01 15:10:11', '" + nuc + "'); \n"
 	string += "insert into segmento_video values ('2', 3600, '"+year+"-"+month+"-01 15:10:11', '" + nuc + "'); \n"
@@ -51,17 +54,24 @@ for i in range(99):
 	string += "insert into vigia values ('" + random.choice(morada) + "', '" + str(ids[i]) + "');"+ '\n'
 	b.write(string)
 
-string = "insert into vigia values ('Monchique', '" + str(ids[99]) + "');"+ '\n'
+string = ""
+string += "insert into vigia values ('Monchique', '" + str(ids[99]) + "');"+ '\n'
 b.write(string)
 
 '''processo_socorro, evento_emergencia'''
-for i in range(100):	
+for i in range(99):	
 	string = ""
 	string += "insert into processo_socorro values ('" + str(ids[i]) + "');"+ '\n'
 	for j in range(int(random.random()*4)):
 		datei = int(j * 36/4) + int(random.random()*36/4)
-		string += "insert into evento_emergencia values ('" + str(numeros_tele[i*4 + j]) + "', " + dates[datei] + ", '"  + random.choice(nomes) + "', '" + random.choice(morada) + "', '" + str(ids[i]) +  "');\n"
+		string += "insert into evento_emergencia values ('" + str(numeros_tele[i*4 + j]) + "', " + dates[datei] + ", '"  + random.choice( nomes) + "', '" + random.choice(morada) + "', '" + str(ids[i]) +  "');\n"
 	b.write(string)
+
+i = 99
+string = ""
+string += "insert into processo_socorro values ('" + str(ids[99]) + "');"+ '\n'
+string += "insert into evento_emergencia values ('" + str(numeros_tele[399]) + "', '2018-04-23 15:10:11' , '"  + random.choice( nomes) + "', 'Oliveira do Hospital', '" + str(ids[i]) +  "');\n"
+b.write(string)
 
 '''entidade_meio'''
 for i in range(len(entidademeio)):
@@ -92,12 +102,23 @@ for i in range(500):
 	b.write(string)
 
 '''acciona'''
+proc_oli_hosp = ""
 for i in range(100):
 	string = ""
 	meio = meios[i]
 	pscorr = shuffleids[i]
 	accionas.append((meio[0], meio[1], pscorr))
+	if pscorr == ids[99]:
+		proc_oli_hosp = str(pscorr)
 	string += "insert into acciona values ('" + str(meio[0]) + "', '" + meio[1] + "', '" + str(pscorr) + "');\n"
+	b.write(string)
+
+if (proc_oli_hosp == ""):
+	string = ""
+	meio = meios[100]
+	proc_oli_hosp = shuffleids[100]
+	accionas.append((meio[0], meio[1], proc_oli_hosp))
+	string += "insert into acciona values ('" + str(meio[0]) + "', '" + meio[1] + "', '" + proc_oli_hosp + "');\n"
 	b.write(string)
 
 '''transporta
@@ -131,12 +152,12 @@ for i in range(len(accionas)):
 
 
 '''coordenador'''
-for i in range(100):
+for i in range(200):
 	string = "insert into coordenador values ('" + str(shuffleids[i]) + "');\n"
 	b.write(string)
 
 '''audita'''
-for i in range(90):
+for i in range(90): #o 100 nao pode ser auditado
 	idcoor = str(shuffleids[i])
 	nummeio = str(accionas[i][0])
 	noment = accionas[i][1]
@@ -157,7 +178,7 @@ for i in range(90):
 	b.write(string)
 
 '''solicita'''
-for i in range(100):
+for i in range(90):
 	idcoor = str(shuffleids[i])
 
 	idn = i % 4
