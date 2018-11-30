@@ -6,7 +6,7 @@
 
     $additionalQueries = [
         "processo_socorro" =>
-            ""
+            "&INSERT INTO evento_emergencia VALUES (:num_telefone, :instante_chamada, :nome_pessoa, :morada_local, :num_processo_socorro);"
     ];
 
     $tablesKeys = [
@@ -67,20 +67,20 @@
         $db = new PDO("pgsql:host=$host;dbname=$dbname", $user, $password);
         $db->setAttribute(PDO::ATTR_ERRMODE, PDO::ERRMODE_EXCEPTION);
 
-        $sql = $addQuery . "INSERT INTO $tableName VALUES (";
+        $sql = "INSERT INTO $tableName VALUES (";
         $separator = "";
         foreach ($namesCol as $c) {
             $sql = $sql . $separator . ":" . $c;
             $separator = ", ";
         }
 
-        $sql = $sql . ");";        
+        $sql = $sql . ");" . $addQuery;        
         
         $sqlarray = explode("&", $sql);
         $result = $db->beginTransaction();
 
         foreach ($sqlarray as $query) {   
-            echo("<p>$query</p>");
+            //echo("<p>$query</p>");
 
             $executeSubst = [];
             $sql_string = explode(" ", $query);
@@ -92,7 +92,9 @@
                     if (substr($word, strlen($word) - 1, 1) == ";") $word = substr($word, 0, strlen($word) - 1);
                     if (substr($word, strlen($word) - 1, 1) == ",") $word = substr($word, 0, strlen($word) - 1);
                     if (substr($word, strlen($word) - 1, 1) == ")") $word = substr($word, 0, strlen($word) - 1);
-                    $executeSubst[":" . $word] = $_REQUEST[$word];
+                    $value = $_REQUEST[$word];
+                    if ($value == "null") $value = null;
+                    $executeSubst[":" . $word] = $value;
                 }
             }
             $result = $db->prepare($query);

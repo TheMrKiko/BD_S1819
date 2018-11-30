@@ -57,7 +57,7 @@ create table evento_emergencia
      instante_chamada     timestamp not null,
      nome_pessoa          varchar(255) not null,
      morada_local         varchar(255) not null,
-     num_processo_socorro char(5),
+     num_processo_socorro char(5) not null,
      constraint pk_evento_emergencia primary key(num_telefone, instante_chamada),
      constraint fk_morada_local         foreign key(morada_local)         references localidade(morada_local),
      constraint fk_num_processo_socorro foreign key(num_processo_socorro) references processo_socorro(num_processo_socorro));

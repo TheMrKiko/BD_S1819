@@ -21,6 +21,10 @@
             DELETE FROM meio_combate WHERE nome_entidade = :nome_entidade;&
             DELETE FROM meio_socorro WHERE nome_entidade = :nome_entidade;&
             DELETE FROM meio_apoio WHERE nome_entidade = :nome_entidade;&",
+        "meio_socorro" =>
+            "DELETE FROM transporta WHERE num_meio = :num_meio and nome_entidade = :nome_entidade;&",
+        "meio_apoio" =>
+            "DELETE FROM alocado WHERE num_meio = :num_meio and nome_entidade = :nome_entidade;&",
         "localidade" =>
             "DELETE FROM evento_emergencia WHERE morada_local = :morada_local;&
             DELETE FROM vigia WHERE morada_local = :morada_local;&",
@@ -29,7 +33,7 @@
             DELETE FROM transporta WHERE num_processo_socorro = :num_processo_socorro;&
             DELETE FROM acciona WHERE num_processo_socorro = :num_processo_socorro;&
             DELETE FROM alocado WHERE num_processo_socorro = :num_processo_socorro;&
-            UPDATE evento_emergencia SET num_processo_socorro = NULL WHERE num_processo_socorro = :num_processo_socorro;&"
+            DELETE FROM evento_emergencia WHERE num_processo_socorro = :num_processo_socorro;&"
     ];
 
     $tablesKeys = [
@@ -81,7 +85,7 @@
         $result = $db->beginTransaction();
         
         foreach ($sqlarray as $query) {   
-            echo("<p>$query</p>");
+            //echo("<p>$query</p>");
 
             $executeSubst = [];
             $sql_string = explode(" ", $query);

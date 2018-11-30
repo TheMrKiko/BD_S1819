@@ -96,7 +96,9 @@
         $sqlarray = explode("&", $sql);
         $result = $db->beginTransaction();
 
-        foreach ($sqlarray as $query) {   
+        foreach ($sqlarray as $query) {
+            //echo("<p>$query</p>");
+
             $result = $db->prepare($query);
             
             $result->execute($executeSubst);
