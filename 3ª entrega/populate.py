@@ -60,7 +60,7 @@ for i in range(100):
 	string += "insert into processo_socorro values ('" + str(ids[i]) + "');"+ '\n'
 	for j in range(int(random.random()*4)):
 		datei = int(j * 36/4) + int(random.random()*36/4)
-		string += "insert into evento_e mergencia values ('" + str(numeros_tele[i*4 + j]) + "', " + dates[datei] + ", '"  + random.choice(nomes) + "', '" + random.choice(morada) + "', '" + str(ids[i]) +  "');\n"
+		string += "insert into evento_emergencia values ('" + str(numeros_tele[i*4 + j]) + "', " + dates[datei] + ", '"  + random.choice(nomes) + "', '" + random.choice(morada) + "', '" + str(ids[i]) +  "');\n"
 	b.write(string)
 
 '''entidade_meio'''
