@@ -58,16 +58,19 @@
         foreach ($tableKeys as $k) {
             $executeSubst[":" . $k] = $_REQUEST[$k];
         }
-        
-        echo("<p>$sql</p>");
 
+        $sqlarray = explode("&", $sql);
         $result = $db->beginTransaction();
-        
-        $result = $db->prepare($sql);
-        
-        $result->execute($executeSubst);
 
+        foreach ($sqlarray as $query) {   
+            $result = $db->prepare($query);
+            
+            $result->execute($executeSubst);
+        }
+        
         $result = $db->commit();
+
+        echo("<p>Removido com sucesso!</p>");
         
         $db = null;
     }

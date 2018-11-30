@@ -71,7 +71,7 @@
         $separator = " ";
         foreach ($namesCol as $c) {
             $sql = $sql . $separator . $c . " = :" . $c;
-            $separator = " and ";
+            $separator = ", ";
         }
 
         $separator = " WHERE ";
@@ -88,15 +88,18 @@
             $executeSubst[":" . $c . "_old"] = $_REQUEST[$c . "+old"];
         }
         
-        echo("<p>$sql</p>");
-
+        $sqlarray = explode("&", $sql);
         $result = $db->beginTransaction();
-        
-        $result = $db->prepare($sql);
-        
-        $result->execute($executeSubst);
+
+        foreach ($sqlarray as $query) {   
+            $result = $db->prepare($query);
+            
+            $result->execute($executeSubst);
+        }
 
         $result = $db->commit();
+
+        echo("<p>Editado com sucesso!</p>");
         
         $db = null;
     }
