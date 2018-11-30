@@ -9,7 +9,7 @@
 \addtolength{\topmargin}{-.875in}
 \addtolength{\textheight}{1.75in}
 
-\author{Grupo 47 \and Daniel Fernandes 86400 \& \\Francisco Sousa 86416 \& Henrique Ferreira 86432}
+\author{Grupo 47 \\\\ Daniel Fernandes 86400 \& \\Francisco Sousa 86416 \& Henrique Ferreira 86432}
 \title{Projeto de Bases de Dados, Parte 3}
 \begin{document}
 
@@ -34,6 +34,9 @@ Prof. Taras Lykhenko \\
 \newpage
 
 \section{Criação e População da Base de Dados}
+
+Para a criação da base de dados foi usado o código em seguida apresentado.
+Em primeiro lugar é limpa a base de dados e em seguida são criadas as tabelas de acordo com o modelo relacional do enunciado. 
 
 \begin{verbatim}
 drop table solicita cascade;
@@ -251,5 +254,10 @@ select nome_entidade from meio_combate where not exists
 (select num_processo_socorro from processo_socorro except 
 select num_processo_socorro from (acciona natural join processo_socorro));
 \end{verbatim}
+
+\section{Desenvolvimento da Aplicação}
+
+
+
 
 \end{document} 
