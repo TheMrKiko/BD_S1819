@@ -41,6 +41,12 @@
                     foreach ($procScorr as $field) {
                         echo("<p>$field: <input type='text' name='$field'/></p>");
                     }
+                } else if ($tableName == "meio_socorro" or $tableName == "meio_apoio" or $tableName == "meio_combate") {
+                    echo("<h4>Criar e associar meio:</h4>");
+                    $meio = $collumnNames["meio"];
+                    foreach ($meio as $field) {
+                        echo("<p>$field: <input type='text' name='$field'/></p>");
+                    }
                 }
             ?>
             <p><input type="submit" value="Adicionar"/></p>

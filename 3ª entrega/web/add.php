@@ -3,8 +3,17 @@
     <a href="addform.php?<?=http_build_query($_REQUEST)?>">< Back</a>
 <?php
     $tableName = $_REQUEST['table'];
+    
+    $additionalBeforeQueries = [
+        "meio_socorro" =>
+            "INSERT INTO meio VALUES(:num_meio, :nome_meio, :nome_entidade);&",
+        "meio_apoio" =>
+            "INSERT INTO meio VALUES(:num_meio, :nome_meio, :nome_entidade);&",
+        "meio_combate" =>
+            "INSERT INTO meio VALUES(:num_meio, :nome_meio, :nome_entidade);&"
+    ];
 
-    $additionalQueries = [
+    $additionalAfterQueries = [
         "processo_socorro" =>
             "&INSERT INTO evento_emergencia VALUES (:num_telefone, :instante_chamada, :nome_pessoa, :morada_local, :num_processo_socorro);"
     ];
@@ -54,9 +63,13 @@
     $tableKeys = $tablesKeys[$tableName];
     $namesCol = $collumnNames[$tableName];
 
-    $addQuery = "";
-    if (array_key_exists($tableName, $additionalQueries))
-        $addQuery = $additionalQueries[$tableName];
+    $addAfterQuery = "";
+    if (array_key_exists($tableName, $additionalAfterQueries))
+        $addAfterQuery = $additionalAfterQueries[$tableName];
+
+    $addBeforeQuery = "";
+    if (array_key_exists($tableName, $additionalBeforeQueries))
+        $addBeforeQuery = $additionalBeforeQueries[$tableName];
 
     try
     {
@@ -67,14 +80,14 @@
         $db = new PDO("pgsql:host=$host;dbname=$dbname", $user, $password);
         $db->setAttribute(PDO::ATTR_ERRMODE, PDO::ERRMODE_EXCEPTION);
 
-        $sql = "INSERT INTO $tableName VALUES (";
+        $sql = $addBeforeQuery . "INSERT INTO $tableName VALUES (";
         $separator = "";
         foreach ($namesCol as $c) {
             $sql = $sql . $separator . ":" . $c;
             $separator = ", ";
         }
 
-        $sql = $sql . ");" . $addQuery;        
+        $sql = $sql . ");" . $addAfterQuery;        
         
         $sqlarray = explode("&", $sql);
         $result = $db->beginTransaction();
