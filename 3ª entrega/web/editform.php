@@ -1,7 +1,7 @@
 <html>
     <body>
-        <a href="list.php?table=<?=$_REQUEST['table']?>">< Back</a>
-        <h3>Adicionar entrada para <?=$_REQUEST['table']?></h3>
+        <a href="list.php?<?=http_build_query($_REQUEST)?>">< Back</a>
+        <h3>Editar entrada de <i><?=$_REQUEST['table']?></i></h3>
         <form action="edit.php" method="post">
             <p><input type="hidden" name="table" value="<?=$_REQUEST['table']?>"/></p>
             <?php
@@ -56,6 +56,7 @@
                 foreach ($namesCol as $field) {
                     $value = $_REQUEST[$field];
                     echo("<p>$field: <input type='text' name='$field' value='$value'/></p>");
+                    echo("<p><input type='hidden' name='$field+old' value='$value'/></p>");
                 }
 
             ?>

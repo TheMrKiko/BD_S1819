@@ -1,7 +1,7 @@
 <html>
     <body>
-        <a href="list.php?table=<?=$_REQUEST['table']?>">< Back</a>
-        <h3>Adicionar entrada para <?=$_REQUEST['table']?></h3>
+        <a href="list.php?<?=http_build_query($_REQUEST)?>">< Back</a>
+        <h3>Adicionar entrada para <i><?=$_REQUEST['table']?></i></h3>
         <form action="add.php" method="post">
             <p><input type="hidden" name="table" value="<?=$_REQUEST['table']?>"/></p>
             <?php
