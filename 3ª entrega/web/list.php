@@ -51,7 +51,7 @@
         "solicita" => ["id_coordenador", "data_hora_inicio_video", "num_camara", "data_hora_inicio", "data_hora_fim"]
     ];
 
-    $tableKeys = [
+    $tablesKeys = [
         "camara" => ["num_camara"],
         "video" => ["data_hora_inicio", "num_camara"],
         "segmento_video" => ["num_segmento", "data_hora_inicio", "num_camara"],
@@ -72,12 +72,7 @@
         "solicita" => ["id_coordenador", "data_hora_inicio_video", "num_camara"]
     ];
 
-    /* $collumnDesignations = [
-        "localidade" => ["Morada Local"],
-        "acciona" => ["Num Meio", "Nome Entidade", "Num Processo Socorro"]
-    ]; */
-
-    //$designatCol = $collumnDesignations[$tableName];
+    $tableKeys = $tablesKeys[$tableName];
     $namesCol = $collumnNames[$tableName];
     $canAdd = in_array("a", $tablePermissions[$tableName]);
     $canEdit = in_array("e", $tablePermissions[$tableName]);
@@ -105,7 +100,6 @@
 
         echo("<tr>\n");
 
-        //foreach($designatCol as $c)
         foreach($namesCol as $c)
         {
             echo("<td><strong>{$c}</strong></td>\n");
@@ -122,14 +116,19 @@
             }
 
             $htmlqueries = "";
-            foreach ($tableKeys[$tableName] as $k) {
+            foreach ($namesCol as $k) {
                 $htmlqueries = $htmlqueries . "&" . $k . "=" . $row[$k];
             }
 
+            $htmlkeyqueries = "";
+            foreach ($tableKeys as $k) {
+                $htmlkeyqueries = $htmlkeyqueries . "&" . $k . "=" . $row[$k];
+            }
+
             if ($canEdit)
-                echo("<td><a href=\"edit.php?table={$tableName}{$htmlqueries}\">Editar</a></td>\n");
+                echo("<td><a href=\"editform.php?table={$tableName}{$htmlqueries}\">Editar</a></td>\n");
             if ($canRem)
-                echo("<td><a href=\"remove.php?table={$tableName}{$htmlqueries}\">Remover</a></td>\n");
+                echo("<td><a href=\"remove.php?table={$tableName}{$htmlkeyqueries}\">Remover</a></td>\n");
 
             echo("</tr>\n");
         }

@@ -8,7 +8,7 @@
         "evento_emergencia" => ["", []]
     ];
 
-    $tableKeys = [
+    $tablesKeys = [
         "camara" => ["num_camara"],
         "video" => ["data_hora_inicio", "num_camara"],
         "segmento_video" => ["num_segmento", "data_hora_inicio", "num_camara"],
@@ -29,6 +29,8 @@
         "solicita" => ["id_coordenador", "data_hora_inicio_video", "num_camara"]
     ];
 
+    $tableKeys = $tablesKeys[$tableName];
+
     $addQuery = ["", []];
     if (array_key_exists($tableName, $additionalQueries))
         $addQuery = $additionalQueries[$tableName];
@@ -44,7 +46,7 @@
 
         $sql = $addQuery[0] . "INSERT INTO $tableName VALUES (";
         $separator = "";
-        foreach ($tableKeys[$tableName] as $k) {
+        foreach ($tableKeys as $k) {
             $sql = $sql . $separator . ":" . $k;
             $separator = ", ";
         }
@@ -52,7 +54,7 @@
         $sql = $sql . ");";
         $executeSubst = $addQuery[1];
 
-        foreach ($tableKeys[$tableName] as $k) {
+        foreach ($tableKeys as $k) {
             $executeSubst[":" . $k] = $_REQUEST[$k];
         }
         
