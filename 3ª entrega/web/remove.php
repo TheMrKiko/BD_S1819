@@ -6,7 +6,21 @@
     $tableName = $_REQUEST['table'];
 
     $additionalQueries = [
-        "evento_emergencia" => ["", []]
+        "entidade_meio" => [
+            "DELETE FROM meio_combate WHERE nome_entidade = :nome_entidade;&
+            DELETE FROM meio_socorro WHERE nome_entidade = :nome_entidade;&
+            DELETE FROM meio_apoio WHERE nome_entidade = :nome_entidade;&
+            DELETE FROM meio WHERE nome_entidade = :nome_entidade;&", []],
+        "meio" => [
+            "DELETE FROM meio_combate WHERE nome_entidade = :nome_entidade;&
+            DELETE FROM meio_socorro WHERE nome_entidade = :nome_entidade;&
+            DELETE FROM meio_apoio WHERE nome_entidade = :nome_entidade;&", []],
+        "localidade" => [
+            "DELETE FROM evento_emergencia WHERE morada_local = :morada_local;&",[]],
+        "processo_socorro" => [
+            "DELETE FROM transporta WHERE num_processo_socorro = :num_processo_socorro;&
+            DELETE FROM acciona WHERE num_processo_socorro = :num_processo_socorro;&
+            DELETE FROM alocado WHERE num_processo_socorro = :num_processo_socorro;&",[]]
     ];
 
     $tablesKeys = [
