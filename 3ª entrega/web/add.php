@@ -6,11 +6,11 @@
     
     $additionalBeforeQueries = [
         "meio_socorro" =>
-            "INSERT INTO meio VALUES(:num_meio, :nome_meio, :nome_entidade);&",
+            "INSERT INTO meio VALUES (:num_meio, :nome_meio, :nome_entidade);&",
         "meio_apoio" =>
-            "INSERT INTO meio VALUES(:num_meio, :nome_meio, :nome_entidade);&",
+            "INSERT INTO meio VALUES (:num_meio, :nome_meio, :nome_entidade);&",
         "meio_combate" =>
-            "INSERT INTO meio VALUES(:num_meio, :nome_meio, :nome_entidade);&"
+            "INSERT INTO meio VALUES (:num_meio, :nome_meio, :nome_entidade);&"
     ];
 
     $additionalAfterQueries = [
