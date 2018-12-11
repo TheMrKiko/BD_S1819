@@ -1,5 +1,5 @@
--- Um Coordenador só pode solicitar vídeos de câmaras colocadas num local cujo
--- accionamento de meios esteja a ser (ou tenha sido) auditado por ele próprio
+-- Um Coordenador so pode solicitar videos de camaras colocadas num local cujo
+-- accionamento de meios esteja a ser (ou tenha sido) auditado por ele proprio
 
 --on solicia
 --must exist audita cujo acciona esteja relacionado com um processo de socorro que
@@ -19,6 +19,8 @@ BEGIN
 	THEN
 		RETURN NEW;
 	ELSE
+		RAISE EXCEPTION 'Um coordenador so pode solicitar videos de camaras colocadas num local
+		cujo accionamento de meios esteja a ser (ou tenha sido) auditado por ele proprio!';
 		RETURN NULL;
 	END IF;
 END;
@@ -28,7 +30,7 @@ DROP trigger IF EXISTS chk_coord_local_on_solic ON solicita;
 CREATE trigger chk_coord_local_on_solic BEFORE INSERT ON solicita for each ROW EXECUTE procedure chk_coord_local_on_solic_proc();
 
 
--- Um Meio de Apoio só pode ser alocado a Processos de Socorro para os quais tenha
+-- Um Meio de Apoio so pode ser alocado a Processos de Socorro para os quais tenha
 -- sido accionado.
 
 --on alocado must exist um acciona
@@ -45,6 +47,8 @@ BEGIN
 	THEN
 		RETURN NEW;
 	ELSE
+		RAISE EXCEPTION 'Um Meio de Apoio so pode ser alocado a Processos de Socorro para
+		os quais tenha sido accionado!';
 		RETURN NULL;
 	END IF;
 END;
