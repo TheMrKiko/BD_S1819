@@ -16,6 +16,10 @@ drop table localidade cascade;
 drop table camara cascade;
 drop table video cascade;
 drop table segmento_video cascade;
+drop index num_camara_idx;
+drop index morada_local_idx;
+drop index num_processo_socorro_idx;
+drop index num_processo_socorro_e_idx;
 
 create table camara 
     (num_camara char(5) not null unique,
@@ -145,3 +149,7 @@ create table solicita
      constraint fk_solicita_id_coord     foreign key(id_coordenador) references coordenador(id_coordenador),
      constraint fk_solicita_inicio_video foreign key(data_hora_inicio_video, num_camara) references video(data_hora_inicio, num_camara));
 
+create index num_camara_idx on video using btree(num_camara);
+create index morada_local_idx on vigia using btree(morada_local);
+create index num_processo_socorro_t_idx on transporta using btree(num_processo_socorro);
+create index num_processo_socorro_e_idx on evento_emergencia using btree(num_processo_socorro);
