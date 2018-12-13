@@ -95,30 +95,132 @@ CREATE trigger chk_acciona_on_alocado BEFORE INSERT ON alocado for each ROW EXEC
     
 \end{verbatim}
 \section{Índices}
-Assumindo que não existem quaisquer índices predefinidos sobre as tabelas, foram criados os seguintes índices: 
-
-1  As colunas utilizadas para verificação na primeira query são a num\_camara na tabela video e a num\_camara e morada\_local na tabela vigia, logo para tornar a query mais eficaz fazemos dois índices sendo o primeiro um hash porque trata-se de uma comparação entre números. Este índice é portanto agrupado e esparso. O segundo índice será composto pelas duas variáveis ditas em cima da tabela vigia e por isso será uma balanced tree. Este índice é desagrupado e denso. 
-
-2 Para a segunda query temos a presença de um group by e para tal usa-se um índice balanced tree composto pelas duas variáveis num\_telefone e instante\_chamada. 
-
-São criados ainda mais dois índices hash nas tabelas transporta e evento\_emergencia para tornar mais eficaz a query na condição where T.num\_processo\_socorro = E.num\_processo\_socorro, visto que se tratam de índices de variávies unicas, e vão ser utilizadas para comparação. 
 
 \paragraph{a)}
-Para a primeira interrogação, justificaria ter índices do tipo \_ porque \_, para os atributos \_ das tabelas \_.
+Na primeira interrogação, os atributos verificados são num\_camara na tabela video e num\_camara e morada\_local na tabela vigia.
+Assim, para a tornar mais eficaz, fazemos dois índices:
 
-Para a segunda interrogação, justificaria ter índices do tipo \_ porque \_, parsa os atributos \_ das tabelas \_.
+\begin{enumerate}
+    \item O primeiro do tipo hash, para num\_camara na tabela video, pois lidamos com comparações entre números, sendo agrupado
+    e esparso.
+    \item O segundo do tipo balance tree, para num\_camara e morada\_local na tabela vigia, sendo desagrupado e denso.
+\end{enumerate}
+
+Na segunda interrogação, perante o group by, torna-se adequado usar um índice balanced tree composto para os atributos
+num\_telefone e instante\_chamada.
+São ainda criados outros dois índices hash para num\_processo\_socorro, tanto na tabela transporta como evento\_emergencia,
+para tornar mais eficaz a sua comparação, já que são variáveis únicas.
+
 \paragraph{b)}
-Os índices que propomos são:
+Assumindo que não existem quaisquer índices predefinidos sobre as tabelas, foram criados os seguintes:
+
 \begin{verbatim}
 \end{verbatim}
 
 \section{Modelo Multidimensional}
 \begin{verbatim}
+drop table factos;
+drop table d_evento;
+drop table d_meio;
+drop table d_tempo;
+
+create table d_evento
+    (id_evento serial,
+    num_telefone char(9) not null,
+    instante_chamada timestamp not null,
+    constraint pk_id_evento primary key(id_evento)
+);
+
+create table d_meio
+    (id_meio serial,
+    num_meio char(5) not null,
+    nome_meio varchar(255) not null,
+    nome_entidade varchar(20) not null,
+    tipo varchar(20) not null,
+    constraint pk_id_meio primary key (id_meio)
+);
+
+create table d_tempo
+    (id_tempo serial,
+     dia int not null,
+     mes int not null,
+     ano int not null,
+     constraint pk_id_tempo primary key(id_tempo)
+);
+
+create table factos
+    (id_tempo int not null,
+     id_meio int not null,
+     id_evento int not null,
+     constraint pk_factos primary key(id_tempo, id_meio, id_evento),
+     constraint fk_tempo foreign key (id_tempo) references d_tempo(id_tempo),
+     constraint fk_meio foreign key (id_meio) references d_meio(id_meio),
+     constraint fk_evento foreign key (id_evento) references d_evento(id_evento)
+);
+\end{verbatim}
+
+para popular:
+\begin{verbatim}
+insert into d_evento (num_telefone, instante_chamada)
+select num_telefone, instante_chamada from evento_emergencia;
+
+insert into d_meio (num_meio, nome_meio, nome_entidade, tipo)
+select num_meio, nome_meio, nome_entidade, 'apoio' from meio natural join meio_apoio;
+insert into d_meio (num_meio, nome_meio, nome_entidade, tipo)
+select num_meio, nome_meio, nome_entidade, 'combate' from meio natural join meio_combate;
+insert into d_meio (num_meio, nome_meio, nome_entidade, tipo)
+select num_meio, nome_meio, nome_entidade, 'socorro' from meio natural join meio_socorro;
+
+insert into d_tempo (dia, mes, ano) values(22, 4, 2005);
+insert into d_tempo (dia, mes, ano) values(15, 2, 2009);
+insert into d_tempo (dia, mes, ano) values(29, 2, 2018);
+insert into d_tempo (dia, mes, ano) values(27, 8, 1998);
+insert into d_tempo (dia, mes, ano) values(28, 8, 1996);
+insert into d_tempo (dia, mes, ano) values(1, 10, 1999);
+insert into d_tempo (dia, mes, ano) values(7, 8, 1997);
+insert into d_tempo (dia, mes, ano) values(27, 1, 1999);
+insert into d_tempo (dia, mes, ano) values(3, 7, 2007);
+insert into d_tempo (dia, mes, ano) values(3, 9, 2018);
+insert into d_tempo (dia, mes, ano) values(9, 8, 1998);
+insert into d_tempo (dia, mes, ano) values(4, 7, 2000);
+insert into d_tempo (dia, mes, ano) values(11, 9, 2001);
+insert into d_tempo (dia, mes, ano) values(24, 7, 2015);
+
+insert into factos
+select id_tempo, id_meio, id_evento from d_evento cross join d_meio cross join d_tempo;
 \end{verbatim}
 
 
 \section{Data analytics}
+-- UNION
 \begin{verbatim}
+select tipo, ano, mes, count(*)
+    from (d_tempo natural join d_meio natural join
+        (select * from factos where id_evento = '15') as a) 
+    group by tipo, ano, mes
+union
+select tipo, ano, null, count(*) 
+    from (d_tempo natural join d_meio natural join
+        (select * from factos where id_evento = '15') as a) 
+    group by tipo, ano
+union
+select tipo, null, null, count(*) 
+    from (d_tempo natural join d_meio natural join
+        (select * from factos where id_evento = '15') as a) 
+    group by tipo
+union
+select null, null, null, count(*) 
+    from (d_tempo natural join d_meio natural join
+        (select * from factos where id_evento = '15') as a)
+order by tipo, ano, mes;
+\end{verbatim}
+-- ROLLUP
+\begin{verbatim}
+select tipo, ano, mes, count(*)
+    from (d_tempo natural join d_meio natural join
+    (select * from factos where id_evento = '15') as a)
+group by rollup (tipo, ano, mes)
+order by tipo, ano, mes;
 \end{verbatim}
 
 

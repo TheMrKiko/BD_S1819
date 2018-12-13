@@ -1,7 +1,7 @@
+drop table factos;
 drop table d_evento;
 drop table d_meio;
 drop table d_tempo;
-drop table factos;
 
 create table d_evento
     (id_evento serial,
@@ -28,45 +28,42 @@ create table d_tempo
     );
 
 create table factos
-    (id_tempo char(5) not null,
-     id_meio char(5) not null,
-     id_evento char(5) not null,
+    (id_tempo int not null,
+     id_meio int not null,
+     id_evento int not null,
      constraint pk_factos primary key(id_tempo, id_meio, id_evento),
      constraint fk_tempo foreign key (id_tempo) references d_tempo(id_tempo),
      constraint fk_meio foreign key (id_meio) references d_meio(id_meio),
      constraint fk_evento foreign key (id_evento) references d_evento(id_evento)
     );
 
-insert into d_evento
+insert into d_evento (num_telefone, instante_chamada)
 select num_telefone, instante_chamada from evento_emergencia;
 
-insert into d_meio
-select num_meio, nome_meio, nome_entidade, "apoio" from meio natural join meio_apoio;
-insert into d_meio
-select num_meio, nome_meio, nome_entidade, "combate" from meio natural join meio_combate;
-insert into d_meio
-select num_meio, nome_meio, nome_entidade, "socorro" from meio natural join meio_socorro;
+insert into d_meio (num_meio, nome_meio, nome_entidade, tipo)
+select num_meio, nome_meio, nome_entidade, 'apoio' from meio natural join meio_apoio;
+insert into d_meio (num_meio, nome_meio, nome_entidade, tipo)
+select num_meio, nome_meio, nome_entidade, 'combate' from meio natural join meio_combate;
+insert into d_meio (num_meio, nome_meio, nome_entidade, tipo)
+select num_meio, nome_meio, nome_entidade, 'socorro' from meio natural join meio_socorro;
 
-insert into d_tempo values(22, 4, 2005);
-insert into d_tempo values(15, 2, 2009);
-insert into d_tempo values(29, 2, 2018);
-insert into d_tempo values(27, 8, 1998);
-insert into d_tempo values(28, 8, 1996);
-insert into d_tempo values(1, 10, 1999);
-insert into d_tempo values(7, 8, 1997);
-insert into d_tempo values(27, 1, 1999);
-insert into d_tempo values(3, 7, 2007);
-insert into d_tempo values(3, 9, 2018);
-insert into d_tempo values(9, 8, 1998);
-insert into d_tempo values(4, 7, 2000);
-insert into d_tempo values(11, 9, 2001);
-insert into d_tempo values(24, 7, 2015);
+insert into d_tempo (dia, mes, ano) values(22, 4, 2005);
+insert into d_tempo (dia, mes, ano) values(15, 2, 2009);
+insert into d_tempo (dia, mes, ano) values(29, 2, 2018);
+insert into d_tempo (dia, mes, ano) values(27, 8, 1998);
+insert into d_tempo (dia, mes, ano) values(28, 8, 1996);
+insert into d_tempo (dia, mes, ano) values(1, 10, 1999);
+insert into d_tempo (dia, mes, ano) values(7, 8, 1997);
+insert into d_tempo (dia, mes, ano) values(27, 1, 1999);
+insert into d_tempo (dia, mes, ano) values(3, 7, 2007);
+insert into d_tempo (dia, mes, ano) values(3, 9, 2018);
+insert into d_tempo (dia, mes, ano) values(9, 8, 1998);
+insert into d_tempo (dia, mes, ano) values(4, 7, 2000);
+insert into d_tempo (dia, mes, ano) values(11, 9, 2001);
+insert into d_tempo (dia, mes, ano) values(24, 7, 2015);
 
 insert into factos
 select id_tempo, id_meio, id_evento from d_evento cross join d_meio cross join d_tempo;
-
-
-
 
 --select data_hora_inicio, data_hora_fim
 --from video V, vigia I
