@@ -95,18 +95,18 @@ CREATE trigger chk_acciona_on_alocado BEFORE INSERT ON alocado for each ROW EXEC
     
 \end{verbatim}
 \section{Índices}
-Assumindo que não existem quais quer índices predefinidos sobre as tabelas, foram criados os seguintes índices: 
+Assumindo que não existem quaisquer índices predefinidos sobre as tabelas, foram criados os seguintes índices: 
 
-1  As colunas utilizadas para verificação na primeira query são a num_camara na tabela video e a num_camara e morada_local na tabela vigia, logo para tornar a query mais eficaz fazemos dois índices sendo o primeiro um hash porque trata-se de uma comparação entre números. Este índice é portanto agrupado e esparso. O segundo índice será composto pelas duas variáveis ditas em cima da tabela vigia e por isso será uma balanced tree.  Este índice é desagrupado e denso. 
+1  As colunas utilizadas para verificação na primeira query são a num\_camara na tabela video e a num\_camara e morada\_local na tabela vigia, logo para tornar a query mais eficaz fazemos dois índices sendo o primeiro um hash porque trata-se de uma comparação entre números. Este índice é portanto agrupado e esparso. O segundo índice será composto pelas duas variáveis ditas em cima da tabela vigia e por isso será uma balanced tree. Este índice é desagrupado e denso. 
 
-2 Para a segunda query temos a presença de um group by e para tal usa-se um índice balanced tree composto pelas duas variáveis num_telefone e instante_chamada. 
+2 Para a segunda query temos a presença de um group by e para tal usa-se um índice balanced tree composto pelas duas variáveis num\_telefone e instante\_chamada. 
 
-São criados ainda mais dois índices hash nas tabelas transporta e evento_emergencia para tornar mais eficaz a query na condição where T.num_processo_socorro = E.num_processo_socorro, visto que se tratam de índices de variávies unicas, e vão ser utilizadas para comparação. 
+São criados ainda mais dois índices hash nas tabelas transporta e evento\_emergencia para tornar mais eficaz a query na condição where T.num\_processo\_socorro = E.num\_processo\_socorro, visto que se tratam de índices de variávies unicas, e vão ser utilizadas para comparação. 
 
 \paragraph{a)}
 Para a primeira interrogação, justificaria ter índices do tipo \_ porque \_, para os atributos \_ das tabelas \_.
 
-Para a segunda interrogação, justificaria ter índices do tipo \_ porque \_, para os atributos \_ das tabelas \_.
+Para a segunda interrogação, justificaria ter índices do tipo \_ porque \_, parsa os atributos \_ das tabelas \_.
 \paragraph{b)}
 Os índices que propomos são:
 \begin{verbatim}
