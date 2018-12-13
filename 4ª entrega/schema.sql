@@ -20,6 +20,10 @@ drop index num_camara_idx;
 drop index morada_local_idx;
 drop index num_processo_socorro_idx;
 drop index num_processo_socorro_e_idx;
+drop table d_evento;
+drop table d_meio;
+drop table d_tempo;
+drop table factos;
 
 create table camara 
     (num_camara char(5) not null unique,
@@ -111,7 +115,8 @@ create table alocado
      num_processo_socorro char(5),
      constraint pk_alocado primary key(num_processo_socorro, nome_entidade, num_meio),
      constraint fk_alocado_num_meio foreign key(num_meio, nome_entidade) references meio_apoio(num_meio, nome_entidade),
-     constraint fk_alocado_num_proc foreign key(num_processo_socorro) references processo_socorro(num_processo_socorro));
+     constraint fk_alocado_num_proc foreign key(num_processo_socorro) references processo_socorro(num_processo_socorro),
+     constraint ck_num_processo_socorro check (num_processo_socorro in meio_apoio) and (num_processo_socorro in acciona));
 
 create table acciona
     (num_meio             char(5)    not null,
@@ -149,7 +154,52 @@ create table solicita
      constraint fk_solicita_id_coord     foreign key(id_coordenador) references coordenador(id_coordenador),
      constraint fk_solicita_inicio_video foreign key(data_hora_inicio_video, num_camara) references video(data_hora_inicio, num_camara));
 
-create index num_camara_idx on video using btree(num_camara);
-create index morada_local_idx on vigia using btree(morada_local);
+create index num_camara_idx on video using hash(num_camara);
+create index morada_local_idx on vigia using btree(num_camara,morada_local);
+create index group_by_idx on evento_emergencia using btree(num_telefone, instante_chamada);
+create index num_processo_socorro_e_idx on evento_emergencia using hash(num_processo_socorro);
 create index num_processo_socorro_t_idx on transporta using btree(num_processo_socorro);
-create index num_processo_socorro_e_idx on evento_emergencia using btree(num_processo_socorro);
+
+
+create table d_evento
+    (id_evento char(5) not null,
+    num_telefone char(9) not null,
+    instante_chamada timestamp not null,
+    constraint pk_id_evento primary key(id_evento)
+    );
+
+create table d_meio
+    (id_meio char(5) not null,
+    num_meio char(5) not null,
+    nome_meio varchar(255) not null,
+    nome_entidade varchar(20) not null,
+    tipo varchar(20) not null,
+    constraint pk_id_meio primary key (id_meio)
+    );
+
+create table d_tempo
+    (id_tempo char(5) not null,
+     dia int not null,
+     mes int not null,
+     ano int not null,
+     constraint pk_id_tempo primary key(id_tempo)
+    );
+
+create table factos
+    (id_tempo char(5) not null,
+     id_meio char(5) not null,
+     id_evento char(5) not null,
+     constraint pk_factos primary key(id_tempo, id_meio, id_evento),
+     constraint fk_tempo foreign key (id_tempo) references d_tempo(id_tempo),
+     constraint fk_meio foreign key (id_meio) references d_meio(id_meio),
+     constraint fk_evento foreign key (id_evento) references d_evento(id_evento)
+    );
+--select data_hora_inicio, data_hora_fim
+--from video V, vigia I
+--where V.num_camara = I.num_camara
+--and V.num_camara = '10'
+--and I.morada_local = 'Loures'
+--select sum(num_vitimas)
+--from transporta T, evento_emergencia E
+--where T.num_processo_socorro = E.num_processo_socorro
+--group by num_telefone, instante_chamada
