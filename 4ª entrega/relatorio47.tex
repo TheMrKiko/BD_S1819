@@ -36,9 +36,9 @@ Prof. Taras Lykhenko \\
 \section{Restrições de Integridade}
 
 Os mecanismos que achamos mais apropriados para a definição destas restrições
-de integridade são os \textbf{triggers}. Fazem consultas mais complexas do que o
-\textbf{CHECK} e permitem lançar exceções.
-Ainda, as operações com que trabalham não provocam triggers em cadeia.
+de integridade são os \underline{triggers}. Fazem consultas mais complexas do que o
+\texttt{CHECK} e permitem lançar exceções.
+Ainda, as operações com que trabalham não provocam \underline{triggers} em cadeia.
 
 Assim, para cada problema, temos:
 
@@ -97,18 +97,19 @@ CREATE trigger chk_acciona_on_alocado BEFORE INSERT ON alocado for each ROW EXEC
 \section{Índices}
 
 \paragraph{a)}
-Na primeira interrogação, os atributos verificados são num\_camara na tabela video e num\_camara e morada\_local na tabela vigia.
+\subparagraph{Primeira Interrogação}
+Os atributos verificados são \textit{num\_camara} na tabela \textbf{video} e \textit{num\_camara} e \textit{morada\_local} na tabela \textbf{vigia}.
 Assim, para a tornar mais eficaz, fazemos dois índices:
 
-\begin{enumerate}
-    \item O primeiro do tipo hash, para num\_camara na tabela video, pois lidamos com comparações entre números, sendo agrupado
-    e esparso.
-    \item O segundo do tipo balance tree, para num\_camara e morada\_local na tabela vigia, sendo desagrupado e denso.
-\end{enumerate}
+O primeiro do tipo \underline{hash}, para \textit{num\_camara} na tabela \textbf{video}, pois lidamos com comparações entre números,
+sendo agrupado e esparso.
 
-Na segunda interrogação, perante o group by, torna-se adequado usar um índice balanced tree composto para os atributos
-num\_telefone e instante\_chamada.
-São ainda criados outros dois índices hash para num\_processo\_socorro, tanto na tabela transporta como evento\_emergencia,
+O segundo do tipo \underline{balance tree}, para \textit{num\_camara} e \textit{morada\_local} na tabela \textbf{vigia}, sendo desagrupado e denso.
+
+\subparagraph{Segunda Interrogação}
+Perante o \texttt{GROUP BY}, torna-se adequado usar um índice \underline{balanced tree} composto para os atributos
+\textit{num\_telefone} e \textit{instante\_chamada}.
+São ainda criados outros dois índices \underline{hash} para \textit{num\_processo\_socorro}, tanto na tabela \textbf{transporta} como \textbf{evento\_emergencia},
 para tornar mais eficaz a sua comparação, já que são variáveis únicas.
 
 \paragraph{b)}
@@ -118,6 +119,7 @@ Assumindo que não existem quaisquer índices predefinidos sobre as tabelas, for
 \end{verbatim}
 
 \section{Modelo Multidimensional}
+O esquema em estrela é:
 \begin{verbatim}
 drop table factos;
 drop table d_evento;
@@ -159,17 +161,18 @@ create table factos
 );
 \end{verbatim}
 
-para popular:
+Usámos as seguintes queries para popular o esquema em estrela:
+
 \begin{verbatim}
 insert into d_evento (num_telefone, instante_chamada)
-select num_telefone, instante_chamada from evento_emergencia;
+    select num_telefone, instante_chamada from evento_emergencia;
 
 insert into d_meio (num_meio, nome_meio, nome_entidade, tipo)
-select num_meio, nome_meio, nome_entidade, 'apoio' from meio natural join meio_apoio;
+    select num_meio, nome_meio, nome_entidade, 'apoio' from meio natural join meio_apoio;
 insert into d_meio (num_meio, nome_meio, nome_entidade, tipo)
-select num_meio, nome_meio, nome_entidade, 'combate' from meio natural join meio_combate;
+    select num_meio, nome_meio, nome_entidade, 'combate' from meio natural join meio_combate;
 insert into d_meio (num_meio, nome_meio, nome_entidade, tipo)
-select num_meio, nome_meio, nome_entidade, 'socorro' from meio natural join meio_socorro;
+    select num_meio, nome_meio, nome_entidade, 'socorro' from meio natural join meio_socorro;
 
 insert into d_tempo (dia, mes, ano) values(22, 4, 2005);
 insert into d_tempo (dia, mes, ano) values(15, 2, 2009);
@@ -187,12 +190,13 @@ insert into d_tempo (dia, mes, ano) values(11, 9, 2001);
 insert into d_tempo (dia, mes, ano) values(24, 7, 2015);
 
 insert into factos
-select id_tempo, id_meio, id_evento from d_evento cross join d_meio cross join d_tempo;
+    select id_tempo, id_meio, id_evento from d_evento cross join d_meio cross join d_tempo;
 \end{verbatim}
 
-
 \section{Data analytics}
--- UNION
+
+Usando \texttt{UNION}:
+
 \begin{verbatim}
 select tipo, ano, mes, count(*)
     from (d_tempo natural join d_meio natural join
@@ -214,7 +218,9 @@ select null, null, null, count(*)
         (select * from factos where id_evento = '15') as a)
 order by tipo, ano, mes;
 \end{verbatim}
--- ROLLUP
+
+Usando \texttt{ROLLUP}:
+
 \begin{verbatim}
 select tipo, ano, mes, count(*)
     from (d_tempo natural join d_meio natural join
