@@ -1,0 +1,115 @@
+\documentclass[10pt,a4paper]{article}
+\usepackage[utf8]{inputenc}
+\usepackage[portuguese]{babel}
+\usepackage{graphicx, hyperref, verbatim, multicol, amsmath, listings}
+
+\addtolength{\oddsidemargin}{-1.4in}
+\addtolength{\evensidemargin}{-1.4in}
+\addtolength{\textwidth}{2.8in}
+\addtolength{\topmargin}{-.875in}
+\addtolength{\textheight}{1.75in}
+
+\author{Grupo 47 \\\\ Daniel Fernandes 86400 \& \\Francisco Sousa 86416 \& Henrique Ferreira 86432}
+\title{Projeto de Bases de Dados, Parte 4}
+\begin{document}
+
+\maketitle
+
+\begin{center}
+Turno BD22517957L09 \\
+Sexta 12:30 Lab 8 \\
+Prof. Taras Lykhenko \\
+\end{center}
+
+\begin{table}[h]
+    \centering
+    \begin{tabular}{lll}
+    \hline
+    \textbf{Número de Aluno} & \textbf{Nome} & \textbf{Esforço} \\ \hline
+    86400 & Daniel Fernandes & 33\% (10h) \\ \hline
+    86416 & Francisco Sousa & 33\% (10h) \\ \hline
+    86432 & Henrique Ferreira & 33\% (10h) \\ \hline
+    \end{tabular}
+\end{table}
+\newpage
+
+\section{Restrições de Integridade}
+
+Os mecanismos que achamos mais apropriados para a definição destas restrições
+de integridade são os \textbf{triggers}. Fazem consultas mais complexas do que o \textbf{CHECK}
+
+\paragraph{a)}
+\begin{verbatim}
+CREATE OR REPLACE FUNCTION chk_coord_local_on_solic_proc() 
+RETURNS TRIGGER
+AS $$
+DECLARE morada_camara VARCHAR;
+BEGIN
+    SELECT morada_local INTO morada_camara FROM vigia WHERE num_camara = NEW.num_camara;
+    IF EXISTS 
+        (SELECT * FROM (audita NATURAL JOIN evento_emergencia) AS r
+            WHERE r.morada_local = morada_camara
+            AND r.id_coordenador = NEW.id_coordenador)
+    THEN
+        RETURN NEW;
+    ELSE
+        RAISE EXCEPTION 'Um coordenador so pode solicitar videos de camaras colocadas num local
+        cujo accionamento de meios esteja a ser (ou tenha sido) auditado por ele proprio!';
+        RETURN NULL;
+    END IF;
+END;
+$$ LANGUAGE plpgsql;
+
+DROP trigger IF EXISTS chk_coord_local_on_solic ON solicita;
+CREATE trigger chk_coord_local_on_solic BEFORE INSERT ON solicita for each ROW EXECUTE procedure chk_coord_local_on_solic_proc();
+    
+\end{verbatim}
+
+\paragraph{b)}
+\begin{verbatim}
+CREATE OR REPLACE FUNCTION chk_acciona_on_alocado_proc()
+RETURNS TRIGGER
+AS $$
+BEGIN
+    IF EXISTS
+        (SELECT * FROM acciona
+            WHERE num_meio = NEW.num_meio
+            AND nome_entidade = NEW.nome_entidade
+            AND num_processo_socorro = NEw.num_processo_socorro)
+    THEN
+        RETURN NEW;
+    ELSE
+        RAISE EXCEPTION 'Um Meio de Apoio so pode ser alocado a Processos de Socorro para
+        os quais tenha sido accionado!';
+        RETURN NULL;
+    END IF;
+END;
+$$ LANGUAGE plpgsql;
+
+DROP trigger IF EXISTS chk_acciona_on_alocado ON alocado;
+CREATE trigger chk_acciona_on_alocado BEFORE INSERT ON alocado for each ROW EXECUTE procedure chk_acciona_on_alocado_proc();
+    
+\end{verbatim}
+\section{Índices}
+
+\paragraph{a)}
+Para a primeira interrogação, justificaria ter índices do tipo \_ porque \_, para os atributos \_ das tabelas \_.
+
+Para a segunda interrogação, justificaria ter índices do tipo \_ porque \_, para os atributos \_ das tabelas \_.
+\paragraph{b)}
+Os índices que propomos são:
+\begin{verbatim}
+\end{verbatim}
+
+\section{Modelo Multidimensional}
+\begin{verbatim}
+\end{verbatim}
+
+
+\section{Data analytics}
+\begin{verbatim}
+\end{verbatim}
+
+
+
+\end{document} 
