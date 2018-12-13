@@ -36,7 +36,11 @@ Prof. Taras Lykhenko \\
 \section{Restrições de Integridade}
 
 Os mecanismos que achamos mais apropriados para a definição destas restrições
-de integridade são os \textbf{triggers}. Fazem consultas mais complexas do que o \textbf{CHECK}
+de integridade são os \textbf{triggers}. Fazem consultas mais complexas do que o
+\textbf{CHECK} e permitem lançar exceções.
+Ainda, as operações com que trabalham não provocam triggers em cadeia.
+
+Assim, para cada problema, temos:
 
 \paragraph{a)}
 \begin{verbatim}
