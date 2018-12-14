@@ -119,7 +119,16 @@ Assumindo que não existem quaisquer índices predefinidos sobre as tabelas, for
 \end{verbatim}
 
 \section{Modelo Multidimensional}
-O esquema em estrela é:
+
+O esquema em estrela é, representado na figura \ref{f1}, pode ser definido com as interrogações:
+
+\begin{figure}[h]
+	\centering
+	\includegraphics[width=0.5\textwidth]{modeloestrela}
+	\caption{Esquema em estrela}
+	\label{f1}
+\end{figure}
+
 \begin{verbatim}
 drop table factos;
 drop table d_evento;
@@ -195,7 +204,13 @@ insert into factos
 
 \section{Data analytics}
 
-Usando \texttt{UNION}:
+Considerando o esquema em estrela criado anteriormente, fizemos duas interrogações
+SQL OLAP para obter o número de meios de cada tipo utilizados no evento número 15, com
+rollup por ano e mês. Ambas mostram o número de meios ordenados por cada um dos critérios
+\textit{mes}, \textit{ano}, \textit{tipo}, em ordem ascendente, listando a soma dos tipos,
+tanto por mês, como por ano, como por tipo.
+
+Para versão de postgres inferior a 9.5, usamos \texttt{UNION}:
 
 \begin{verbatim}
 select tipo, ano, mes, count(*)
@@ -219,7 +234,7 @@ select null, null, null, count(*)
 order by tipo, ano, mes;
 \end{verbatim}
 
-Usando \texttt{ROLLUP}:
+Usando \texttt{ROLLUP}, para versão postgres igual ou superior a 9.5:
 
 \begin{verbatim}
 select tipo, ano, mes, count(*)
