@@ -154,4 +154,4 @@ create index num_camara_idx on video using hash(num_camara);
 create index morada_local_idx on vigia using btree(num_camara,morada_local);
 create index group_by_idx on evento_emergencia using btree(num_telefone, instante_chamada);
 create index num_processo_socorro_e_idx on evento_emergencia using hash(num_processo_socorro);
-create index num_processo_socorro_t_idx on transporta using btree(num_processo_socorro);
+create index num_processo_socorro_t_idx on transporta using hash(num_processo_socorro);
